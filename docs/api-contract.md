@@ -12,6 +12,7 @@ Code source:
 - `POST /api/session/start`
 - `POST /api/session/answer`
 - `POST /api/session/reset`
+- `POST /api/synthesize`
 - `POST /api/generate`
 
 ## Request-ID Contract
@@ -107,6 +108,17 @@ Success:
   - `image` supports:
     - `{ type: "url", url, mimeType? }`
     - `{ type: "base64", base64, mimeType }`
+
+Failure:
+- error envelope
+
+### `POST /api/synthesize`
+
+Request:
+- `{ sessionId }`
+
+Success:
+- `{ ok, requestId, outputText, model }`
 
 Failure:
 - error envelope

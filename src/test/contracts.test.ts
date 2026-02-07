@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { REQUEST_ID_HEADER, SESSION_COOKIE_NAME } from '../api/contracts';
+import { API_ENDPOINTS, REQUEST_ID_HEADER, SESSION_COOKIE_NAME } from '../api/contracts';
 import {
   ErrorResponseSchema,
   GenerateResponseSchema,
   SessionAnswerResponseSchema,
   SessionResetResponseSchema,
   SessionStartRequestSchema,
+  SynthesizeResponseSchema,
 } from '../schemas/api';
 import { SessionStateSchema, TemplateSchema } from '../schemas/domain';
 import { FunnelEventSchema, ProviderErrorLogSchema } from '../schemas/telemetry';
@@ -88,6 +89,7 @@ describe('api schemas', () => {
   it('exports stable envelope constants', () => {
     expect(REQUEST_ID_HEADER).toBe('x-request-id');
     expect(SESSION_COOKIE_NAME).toBe('nanostyle.sid');
+    expect(API_ENDPOINTS.synthesize).toBe('/api/synthesize');
   });
 
   it('validates error envelope shape', () => {
@@ -102,6 +104,17 @@ describe('api schemas', () => {
         },
       }).error.code,
     ).toBe('VALIDATION_ERROR');
+  });
+
+  it('accepts synthesize response variant', () => {
+    expect(
+      SynthesizeResponseSchema.parse({
+        ok: true,
+        requestId: 'req_12345678',
+        outputText: 'cinematic studio portrait',
+        model: 'prompt:pmpt_abc:v1',
+      }).ok,
+    ).toBe(true);
   });
 });
 

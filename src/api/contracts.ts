@@ -11,5 +11,6 @@ export const API_ENDPOINTS = {
   sessionStart: '/api/session/start',
   sessionAnswer: '/api/session/answer',
   sessionReset: '/api/session/reset',
+  synthesize: '/api/synthesize',
   generate: '/api/generate',
 } as const;

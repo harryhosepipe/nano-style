@@ -215,6 +215,12 @@
         background: #fffaf4;
       }
 
+      .prompt-output {
+        margin: 0;
+        white-space: pre-wrap;
+        line-height: 1.45;
+      }
+
       img {
         max-width: 100%;
         display: block;
@@ -270,7 +276,8 @@
         questionIndex: 1,
         questionText: '',
         answerText: '',
-        image: null,
+        prompt: '',
+        promptModel: '',
         error: '',
         notice: '',
         isSubmitting: false,
@@ -309,8 +316,8 @@
         reset(payload) {
           return request('/api/session/reset', { method: 'POST', body: JSON.stringify(payload) }, isResetResponse);
         },
-        generate(payload) {
-          return request('/api/generate', { method: 'POST', body: JSON.stringify(payload) }, isGenerateResponse);
+        synthesize(payload) {
+          return request('/api/synthesize', { method: 'POST', body: JSON.stringify(payload) }, isSynthesizeResponse);
         },
       };
 
@@ -365,7 +372,7 @@
               state.answerText = '';
             }
           } else if (state.stage === 'ready_to_generate' || state.stage === 'result' || state.stage === 'error') {
-            await runGenerate();
+            await runSynthesize();
           }
         } catch (error) {
           setError(toUserMessage(error, 'Request failed. Try again.'));
@@ -409,7 +416,7 @@
 
         if (action === 'generate-another') {
           clearStatus();
-          await runGenerate();
+          await runSynthesize();
           render();
           focusInput();
           return;
@@ -423,20 +430,21 @@
         }
       });
 
-      async function runGenerate() {
+      async function runSynthesize() {
         if (!state.sessionId) throw new Error('Session not found. Start over.');
         state.stage = 'generating';
         state.isSubmitting = true;
         render();
         try {
-          const response = await runWithRetry(() => api.generate({ sessionId: state.sessionId }), 1);
-          state.image = response.image;
+          const response = await runWithRetry(() => api.synthesize({ sessionId: state.sessionId }), 1);
+          state.prompt = response.outputText;
+          state.promptModel = response.model;
           state.stage = 'result';
-          state.notice = 'Image generated.';
+          state.notice = 'OpenAI output generated.';
           state.error = '';
         } catch (error) {
           state.stage = 'error';
-          setError(toUserMessage(error, 'Image generation failed. Retry.'));
+          setError(toUserMessage(error, 'Prompt generation failed. Retry.'));
         } finally {
           state.isSubmitting = false;
         }
@@ -527,11 +535,11 @@
       }
 
       function renderReadyStage() {
-        els.title.textContent = 'Ready to Generate';
+        els.title.textContent = 'Ready to Generate Prompt';
         els.view.innerHTML = `
-          <p>Your answers are captured. Generate an image now.</p>
+          <p>Your answers are captured. Generate OpenAI output now.</p>
           <div class="row">
-            <button class="primary" type="submit" ${state.isSubmitting ? 'disabled' : ''}>Generate image</button>
+            <button class="primary" type="submit" ${state.isSubmitting ? 'disabled' : ''}>Generate prompt</button>
             <button class="ghost" type="button" data-action="change-answers">Change answers</button>
             <button class="ghost" type="button" data-action="start-over">Start over</button>
           </div>
@@ -539,20 +547,20 @@
       }
 
       function renderGeneratingStage() {
-        els.title.textContent = 'Generating';
+        els.title.textContent = 'Generating Prompt';
         els.view.innerHTML = `
-          <p>Generating image. This can take up to 90 seconds.</p>
+          <p>Generating OpenAI output. This can take up to 30 seconds.</p>
           <div class="hint">Do not close this tab.</div>
         `;
       }
 
       function renderResultStage() {
-        els.title.textContent = 'Result';
-        const imageHtml = renderImageMarkup(state.image);
+        els.title.textContent = 'OpenAI Output';
+        const promptHtml = renderPromptMarkup(state.prompt, state.promptModel);
         els.view.innerHTML = `
-          <div class="image-wrap">${imageHtml}</div>
+          <div class="image-wrap">${promptHtml}</div>
           <div class="row">
-            <button class="primary" type="button" data-action="generate-another" ${state.isSubmitting ? 'disabled' : ''}>Generate another</button>
+            <button class="primary" type="button" data-action="generate-another" ${state.isSubmitting ? 'disabled' : ''}>Regenerate prompt</button>
             <button class="ghost" type="button" data-action="change-answers">Change answers</button>
             <button class="ghost" type="button" data-action="start-over">Start over</button>
           </div>
@@ -560,26 +568,21 @@
       }
 
       function renderErrorStage() {
-        els.title.textContent = 'Generation Error';
+        els.title.textContent = 'Prompt Generation Error';
         els.view.innerHTML = `
-          <p>Generation failed. Retry with the same answers or adjust answers first.</p>
+          <p>Prompt generation failed. Retry with the same answers or adjust answers first.</p>
           <div class="row">
-            <button class="primary" type="submit" ${state.isSubmitting ? 'disabled' : ''}>Retry generate</button>
+            <button class="primary" type="submit" ${state.isSubmitting ? 'disabled' : ''}>Retry prompt generation</button>
             <button class="ghost" type="button" data-action="change-answers">Change answers</button>
             <button class="ghost" type="button" data-action="start-over">Start over</button>
           </div>
         `;
       }
 
-      function renderImageMarkup(image) {
-        if (!image) return '<p>No image found.</p>';
-        if (image.type === 'url') {
-          return `<img src="${escapeHtml(image.url)}" alt="Generated result" loading="lazy" />`;
-        }
-        if (image.type === 'base64') {
-          return `<img src="data:${escapeHtml(image.mimeType)};base64,${escapeHtml(image.base64)}" alt="Generated result" loading="lazy" />`;
-        }
-        return '<p>Unsupported image response.</p>';
+      function renderPromptMarkup(prompt, model) {
+        if (!prompt) return '<p>No prompt output found.</p>';
+        const modelHtml = model ? `<div class="hint">Model: ${escapeHtml(model)}</div>` : '';
+        return `<p class="prompt-output">${escapeHtml(prompt)}</p>${modelHtml}`;
       }
 
       function getInitialInputValue() {
@@ -638,12 +641,8 @@
         return payload.reset === true;
       }
 
-      function isGenerateResponse(payload) {
-        const image = payload.image;
-        if (!image || typeof image !== 'object') return false;
-        if (image.type === 'url') return typeof image.url === 'string';
-        if (image.type === 'base64') return typeof image.base64 === 'string' && typeof image.mimeType === 'string';
-        return false;
+      function isSynthesizeResponse(payload) {
+        return typeof payload.outputText === 'string' && payload.outputText.length > 0 && typeof payload.model === 'string';
       }
 
       async function resetSessionAndView() {
@@ -663,7 +662,8 @@
         state.questionIndex = 1;
         state.questionText = '';
         state.answerText = '';
-        state.image = null;
+        state.prompt = '';
+        state.promptModel = '';
         state.notice = '';
         state.error = '';
         state.editFromQuestionIndex = null;

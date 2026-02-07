@@ -66,6 +66,7 @@ Latest launch baseline snapshot: `docs/launch-baseline-2026-02-07.md`.
 - `GET /api/templates`
 - `POST /api/session/start`
 - `POST /api/session/answer`
+- `POST /api/synthesize`
 - `POST /api/generate`
 
 ## Project Structure

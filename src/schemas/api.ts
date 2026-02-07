@@ -86,6 +86,19 @@ export const GenerateSuccessResponseSchema = z.object({
 
 export const GenerateResponseSchema = z.union([GenerateSuccessResponseSchema, ErrorResponseSchema]);
 
+export const SynthesizeRequestSchema = z.object({
+  sessionId: z.string().min(1),
+});
+
+export const SynthesizeSuccessResponseSchema = z.object({
+  ok: z.literal(true),
+  requestId: RequestIdHeaderSchema,
+  outputText: z.string().min(1),
+  model: z.string().min(1),
+});
+
+export const SynthesizeResponseSchema = z.union([SynthesizeSuccessResponseSchema, ErrorResponseSchema]);
+
 export const SessionResetRequestSchema = z.object({
   sessionId: z.string().min(1).optional(),
 });
@@ -107,5 +120,7 @@ export type SessionAnswerRequest = z.infer<typeof SessionAnswerRequestSchema>;
 export type SessionAnswerSuccessResponse = z.infer<typeof SessionAnswerSuccessResponseSchema>;
 export type GenerateRequest = z.infer<typeof GenerateRequestSchema>;
 export type GenerateSuccessResponse = z.infer<typeof GenerateSuccessResponseSchema>;
+export type SynthesizeRequest = z.infer<typeof SynthesizeRequestSchema>;
+export type SynthesizeSuccessResponse = z.infer<typeof SynthesizeSuccessResponseSchema>;
 export type SessionResetRequest = z.infer<typeof SessionResetRequestSchema>;
 export type SessionResetSuccessResponse = z.infer<typeof SessionResetSuccessResponseSchema>;
