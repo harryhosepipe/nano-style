@@ -6,6 +6,8 @@
   "packageManager": "bun@1.2.16",
   "scripts": {
     "dev": "astro dev",
+    "tunnel:quick": "./scripts/tunnel-quick.sh",
+    "tunnel:token": "./scripts/tunnel-token.sh",
     "build": "astro check && astro build",
     "typecheck": "astro check",
     "lint": "eslint .",

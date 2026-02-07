@@ -11,6 +11,9 @@ For variable definitions and validation rules, see `docs/env-contract.md`.
 - `NANOBANANA_API_URL`
 - `SESSION_SECRET`
 
+Optional for tunnel sharing:
+- `CLOUDFLARE_TUNNEL_TOKEN`
+
 ## Local Development
 
 1. Create local env file:
@@ -58,6 +61,7 @@ Notes:
 - Keep secrets in GitHub Secrets, not checked-in workflow files.
 - Use environment-scoped secrets (for staging/production) once deploy workflows exist.
 - PRs from forks do not receive repository secrets by default.
+- Add `CLOUDFLARE_TUNNEL_TOKEN` only if CI or deployment automation needs to start named tunnels.
 
 ## Verification Checklist
 

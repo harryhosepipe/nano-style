@@ -24,6 +24,13 @@
   - build
   - dependency audit
 
+## Internal Share
+
+- Tunnel scripts:
+  - `bun run tunnel:quick` for temporary URL
+  - `bun run tunnel:token` for stable named tunnel
+- Runbook: `docs/cloudflare-tunnel-runbook.md`
+
 ## Commit Conventions
 
 Use concise, scoped commit subjects:

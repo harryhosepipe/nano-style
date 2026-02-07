@@ -23,6 +23,16 @@ See `docs/secrets-provisioning.md` for local setup and GitHub Actions secret pro
 bun run dev
 ```
 
+## Internal Sharing (Cloudflare Tunnel)
+
+```bash
+bun run tunnel:quick
+# or
+CLOUDFLARE_TUNNEL_TOKEN=... bun run tunnel:token
+```
+
+Runbook: `docs/cloudflare-tunnel-runbook.md`
+
 ## Quality Gates
 
 ```bash
