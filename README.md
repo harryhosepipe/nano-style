@@ -11,7 +11,10 @@ Internal MVP for the NanoBanana Prompt Refinery workflow.
 
 ```bash
 bun install
+cp .env.example .env
 ```
+
+See `docs/env-contract.md` for validation rules and CI/runtime requirements.
 
 ## Development
 

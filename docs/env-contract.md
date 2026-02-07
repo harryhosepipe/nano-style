@@ -1,0 +1,44 @@
+# Environment Variable Contract
+
+This document defines the canonical environment contract for NanoStyle MVP.
+
+## Scope
+
+- Applies to local development, CI, and deployed runtime.
+- All secrets stay server-side only and must never be exposed to client code.
+- Missing required variables are a startup-blocking misconfiguration.
+
+## Required Variables
+
+| Variable | Required | Format | Purpose |
+| --- | --- | --- | --- |
+| `OPENAI_API_KEY` | yes | non-empty string | Auth for OpenAI synthesis/refinement calls. |
+| `NANOBANANA_API_KEY` | yes | non-empty string | Auth for NanoBanana image generation calls. |
+| `NANOBANANA_API_URL` | yes | absolute `http` or `https` URL | Base URL for NanoBanana provider API. |
+| `SESSION_SECRET` | yes | non-empty string, minimum 32 chars | Secret used for signing/verifying session cookie values. |
+
+## Optional Variables
+
+| Variable | Default | Allowed values | Purpose |
+| --- | --- | --- | --- |
+| `NODE_ENV` | `development` | `development`, `test`, `production` | Runtime mode. |
+| `PORT` | framework default | integer 1-65535 | Local server port override for Astro runtime. |
+
+## Validation Rules
+
+- Treat empty strings as invalid for all required values.
+- `NANOBANANA_API_URL` must be parseable as absolute URL and use `http` or `https`.
+- `SESSION_SECRET` must be at least 32 characters before the app can serve requests.
+- Validation happens at app startup and fails fast with a safe error message that does not print secret values.
+
+## Local Developer Setup
+
+1. Copy `.env.example` to `.env`.
+2. Fill all required variables with real values.
+3. Run `bun run dev`.
+
+## CI and Runtime Notes
+
+- CI must inject required variables through repository/environment secrets.
+- Production/staging variables are managed by deployment platform secret storage, never committed files.
+- `.env` remains gitignored; only `.env.example` is committed.
