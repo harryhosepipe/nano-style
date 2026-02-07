@@ -77,7 +77,6 @@ export const createOpenAIAdapter = (): OpenAIAdapter => ({
 
   async synthesizeText(input): Promise<OpenAISynthesisResult> {
     const startedAt = Date.now();
-    const promptCap = Number.parseInt(import.meta.env.PROMPT_MAX_CHARS ?? '', 10) || DEFAULT_PROMPT_CAP_CHARS;
     const text = input.text.trim();
     if (text.length === 0) {
       throw new ApiError('VALIDATION_ERROR', 400, 'Text is required.', false);
@@ -85,10 +84,6 @@ export const createOpenAIAdapter = (): OpenAIAdapter => ({
 
     try {
       const synthesis = await requestSynthesis(text);
-      const boundedPrompt =
-        synthesis.nanobananaPrompt.length > promptCap
-          ? `${synthesis.nanobananaPrompt.slice(0, promptCap)}...`
-          : synthesis.nanobananaPrompt;
       logProviderLatency({
         ts: nowIso(),
         level: 'info',
@@ -100,7 +95,7 @@ export const createOpenAIAdapter = (): OpenAIAdapter => ({
         providerStatus: 'success',
         attempt: 1,
       });
-      return { nanobananaPrompt: boundedPrompt, model: synthesis.model };
+      return synthesis;
     } catch (error) {
       const code = error instanceof ApiError ? error.code : mapProviderErrorCode('openai');
       logProviderError({

@@ -9,19 +9,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --bg-ivory: #fffaf1;
-        --bg-peach: #ffe4c8;
-        --ink: #20201b;
-        --ink-soft: #4f4f45;
-        --card: #fffdf8;
-        --line: #e3d8c7;
-        --brand: #d64f2e;
-        --brand-strong: #bb3b1f;
+        --bg: #090b10;
+        --bg-soft: #10141d;
+        --surface: #111826;
+        --surface-2: #0d1421;
+        --ink: #edf2ff;
+        --ink-soft: #9aa4be;
+        --line: #2a3449;
+        --brand: #6ad6ff;
+        --brand-strong: #4fb8f1;
+        --ok: #70f4b0;
+        --error: #ff7f8b;
       }
 
       * {
@@ -30,48 +33,54 @@
 
       body {
         margin: 0;
-        font-family: 'Chivo', sans-serif;
+        font-family: 'Space Grotesk', sans-serif;
         color: var(--ink);
         min-height: 100vh;
         background:
-          radial-gradient(circle at 12% 10%, rgba(255, 196, 125, 0.4), transparent 38%),
-          radial-gradient(circle at 90% 82%, rgba(214, 79, 46, 0.2), transparent 35%),
-          linear-gradient(160deg, var(--bg-ivory), var(--bg-peach));
+          radial-gradient(circle at 12% 16%, rgba(106, 214, 255, 0.2), transparent 30%),
+          radial-gradient(circle at 86% 84%, rgba(72, 118, 255, 0.22), transparent 32%),
+          linear-gradient(165deg, var(--bg), var(--bg-soft));
       }
 
       .shell {
-        max-width: 900px;
+        max-width: 860px;
         margin: 0 auto;
-        padding: 2rem 1rem 4rem;
+        padding: 2.4rem 1rem 4rem;
       }
 
       .hero {
         border: 1px solid var(--line);
-        border-radius: 18px;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.66));
-        padding: 1.2rem 1.25rem;
-        margin-bottom: 1rem;
+        border-radius: 20px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 60%),
+          linear-gradient(130deg, rgba(106, 214, 255, 0.12), rgba(106, 214, 255, 0.03));
+        padding: 1.35rem 1.45rem;
+        margin-bottom: 1.1rem;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
       }
 
       .kicker {
-        font-size: 0.8rem;
-        letter-spacing: 0.08em;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.74rem;
+        letter-spacing: 0.09em;
         color: var(--ink-soft);
         text-transform: uppercase;
       }
 
       h1 {
-        margin: 0.35rem 0;
-        font-family: 'Fraunces', serif;
-        font-size: clamp(1.5rem, 3vw, 2.4rem);
+        margin: 0.45rem 0 0.5rem;
+        font-size: clamp(1.5rem, 3.2vw, 2.45rem);
+        line-height: 1.15;
       }
 
       .panel {
         border: 1px solid var(--line);
-        background: var(--card);
+        background: linear-gradient(180deg, var(--surface), var(--surface-2));
         border-radius: 20px;
-        padding: 1.25rem;
-        box-shadow: 0 16px 36px -26px rgba(67, 39, 24, 0.4);
+        padding: 1.3rem;
+        box-shadow:
+          0 20px 40px -30px rgba(0, 0, 0, 0.8),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
       }
 
       .stack {
@@ -80,26 +89,27 @@
       }
 
       label {
-        font-weight: 600;
+        font-weight: 500;
         display: block;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.45rem;
       }
 
       textarea {
         width: 100%;
-        border: 1px solid #cfc2ae;
+        border: 1px solid #34405a;
         border-radius: 12px;
-        padding: 0.8rem 0.85rem;
+        padding: 0.92rem 0.95rem;
         font: inherit;
         color: var(--ink);
-        background: #fff;
-        min-height: 140px;
+        background: #0b111c;
+        min-height: 170px;
         resize: vertical;
+        line-height: 1.45;
       }
 
       textarea:focus,
       button:focus-visible {
-        outline: 3px solid rgba(214, 79, 46, 0.35);
+        outline: 3px solid rgba(106, 214, 255, 0.35);
         outline-offset: 1px;
       }
 
@@ -110,57 +120,62 @@
       }
 
       button {
-        border: 0;
+        border: 1px solid transparent;
         border-radius: 12px;
-        padding: 0.72rem 1rem;
+        padding: 0.72rem 1.08rem;
         font: inherit;
-        font-weight: 600;
+        font-weight: 500;
         cursor: pointer;
       }
 
       .primary {
-        background: var(--brand);
-        color: #fff;
+        background: linear-gradient(180deg, var(--brand), var(--brand-strong));
+        color: #02131c;
+        box-shadow: 0 10px 22px -16px rgba(106, 214, 255, 0.8);
       }
 
       .primary:hover {
-        background: var(--brand-strong);
+        filter: brightness(1.06);
       }
 
       .ghost {
-        background: #efe5d6;
-        color: var(--ink);
+        background: #111b2e;
+        color: #d8e4ff;
+        border-color: #34405a;
       }
 
       .status {
         min-height: 1.4rem;
-        font-size: 0.93rem;
+        font-size: 0.9rem;
       }
 
       .status[data-kind='error'] {
-        color: #9b2d1b;
+        color: var(--error);
       }
 
       .status[data-kind='ok'] {
-        color: #2f7e42;
+        color: var(--ok);
       }
 
       .output-wrap {
-        border: 1px dashed #d8c7ad;
+        margin-top: 0.2rem;
+        border: 1px solid #32425f;
         border-radius: 14px;
-        padding: 0.9rem;
-        background: #fffaf4;
+        padding: 1rem;
+        background: #0a1220;
       }
 
       .output-text {
         margin: 0;
         white-space: pre-wrap;
-        line-height: 1.45;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
       }
 
       .hint {
         color: var(--ink-soft);
-        font-size: 0.86rem;
+        font-size: 0.84rem;
+        font-family: 'IBM Plex Mono', monospace;
       }
 
       @media (max-width: 640px) {
