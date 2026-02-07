@@ -13,15 +13,15 @@
 - [x] P0-T3.2 Add PR template, commit conventions, and README bootstrap
 
 ## Phase 1 - Product/UX Alignment & Architecture (Doc-grounded)
-- [ ] P1-T1 Define canonical MVP user flow and state machine
-- [ ] P1-T1.1 Lock fixed questions and sparse-answer behavior
-- [ ] P1-T1.2 Define iteration paths (`generate another`, `change answers`, `start over`)
-- [ ] P1-T2 Define system architecture and sequence contracts
-- [ ] P1-T2.1 Define server-only data boundaries and redaction policy
-- [ ] P1-T2.2 Define error taxonomy and user-facing copy contract
-- [ ] P1-T3 Define observability and analytics event model
-- [ ] P1-T3.1 Define required funnel events and timing points
-- [ ] P1-T3.2 Define logging fields and redaction rules
+- [x] P1-T1 Define canonical MVP user flow and state machine
+- [x] P1-T1.1 Lock fixed questions and sparse-answer behavior
+- [x] P1-T1.2 Define iteration paths (`generate another`, `change answers`, `start over`)
+- [x] P1-T2 Define system architecture and sequence contracts
+- [x] P1-T2.1 Define server-only data boundaries and redaction policy
+- [x] P1-T2.2 Define error taxonomy and user-facing copy contract
+- [x] P1-T3 Define observability and analytics event model
+- [x] P1-T3.1 Define required funnel events and timing points
+- [x] P1-T3.2 Define logging fields and redaction rules
 
 ## Phase 2 - Dev Environment + Tooling + CI/CD + Infra Baseline
 - [ ] P2-T1 Implement environment and secrets management baseline
