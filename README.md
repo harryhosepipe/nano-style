@@ -49,6 +49,12 @@ bun run build
 
 CI enforces these checks plus dependency audit. See `docs/ci-release-hygiene.md`.
 
+Release operations runbook: `docs/release-launch-runbook.md`.
+
+Deployment and share pipeline: `docs/deployment-share-pipeline.md`.
+
+Latest launch baseline snapshot: `docs/launch-baseline-2026-02-07.md`.
+
 ## Contracts
 
 - API contract: `docs/api-contract.md`
