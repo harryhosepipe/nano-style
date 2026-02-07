@@ -7,6 +7,7 @@ For variable definitions and validation rules, see `docs/env-contract.md`.
 ## Required Secrets
 
 - `OPENAI_API_KEY`
+- `OPENAI_PROMPT_ID`
 - `NANOBANANA_API_KEY`
 - `NANOBANANA_API_URL`
 - `SESSION_SECRET`
@@ -44,6 +45,7 @@ Use repository or environment secrets in GitHub:
 2. Go to `Settings -> Secrets and variables -> Actions`.
 3. Add each required secret with exact variable names:
    - `OPENAI_API_KEY`
+   - `OPENAI_PROMPT_ID`
    - `NANOBANANA_API_KEY`
    - `NANOBANANA_API_URL`
    - `SESSION_SECRET`
@@ -53,6 +55,7 @@ When writing workflow files, inject secrets using environment variables:
 ```yaml
 env:
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  OPENAI_PROMPT_ID: ${{ secrets.OPENAI_PROMPT_ID }}
   NANOBANANA_API_KEY: ${{ secrets.NANOBANANA_API_KEY }}
   NANOBANANA_API_URL: ${{ secrets.NANOBANANA_API_URL }}
   SESSION_SECRET: ${{ secrets.SESSION_SECRET }}

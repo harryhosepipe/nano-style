@@ -13,6 +13,7 @@ This document defines the canonical environment contract for NanoStyle MVP.
 | Variable | Required | Format | Purpose |
 | --- | --- | --- | --- |
 | `OPENAI_API_KEY` | yes | non-empty string | Auth for OpenAI synthesis/refinement calls. |
+| `OPENAI_PROMPT_ID` | yes | non-empty string | OpenAI stored prompt id used by `responses.create`. |
 | `NANOBANANA_API_KEY` | yes | non-empty string | Auth for NanoBanana image generation calls. |
 | `NANOBANANA_API_URL` | yes | absolute `http` or `https` URL | Base URL for NanoBanana provider API. |
 | `SESSION_SECRET` | yes | non-empty string, minimum 32 chars | Secret used for signing/verifying session cookie values. |
@@ -23,7 +24,7 @@ This document defines the canonical environment contract for NanoStyle MVP.
 | --- | --- | --- | --- |
 | `NODE_ENV` | `development` | `development`, `test`, `production` | Runtime mode. |
 | `PORT` | framework default | integer 1-65535 | Local server port override for Astro runtime. |
-| `OPENAI_MODEL` | `gpt-4.1-mini` | non-empty string | OpenAI model id for synthesis request. |
+| `OPENAI_PROMPT_VERSION` | `1` | non-empty string | Stored prompt version to pin for `responses.create`. |
 | `PROMPT_MAX_CHARS` | `1200` | integer >= 200 | Max synthesized prompt length before truncation. |
 | `NANOBANANA_TIMEOUT_MS` | `25000` | integer >= 1000 | Per-request timeout for NanoBanana adapter calls. |
 | `NANOBANANA_RETRIES` | `2` | integer >= 1 | Retry attempts for NanoBanana generation call. |

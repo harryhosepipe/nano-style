@@ -1,6 +1,19 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ApiError } from '../api/errors';
+
+const { responsesCreateMock } = vi.hoisted(() => ({
+  responsesCreateMock: vi.fn(),
+}));
+
+vi.mock('openai', () => ({
+  default: class MockOpenAI {
+    responses = {
+      create: responsesCreateMock,
+    };
+  },
+}));
+
 import { createOpenAIAdapter } from '../services/openai/client';
 
 const baseInput = {
@@ -14,7 +27,7 @@ const baseInput = {
   requestId: 'req_openai_test',
 };
 
-describe('openai synthesis parser resilience', () => {
+describe('openai prompt-based synthesis', () => {
   const env = import.meta.env as Record<string, string | undefined>;
   const originalEnv = new Map<string, string | undefined>();
   const setEnv = (key: string, value: string | undefined): void => {
@@ -30,6 +43,7 @@ describe('openai synthesis parser resilience', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    responsesCreateMock.mockReset();
     for (const [key, value] of originalEnv.entries()) {
       if (value === undefined) {
         delete env[key];
@@ -40,57 +54,37 @@ describe('openai synthesis parser resilience', () => {
     originalEnv.clear();
   });
 
-  it('parses strict JSON from output_text', async () => {
+  it('uses configured prompt id/version and returns output_text', async () => {
     setEnv('OPENAI_API_KEY', 'test-key');
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          output_text: '{"nanobanana_prompt":"  cinematic bottle photo  "}',
-        }),
-        { status: 200, headers: { 'content-type': 'application/json' } },
-      ),
-    );
+    setEnv('OPENAI_PROMPT_ID', 'pmpt_abc123');
+    setEnv('OPENAI_PROMPT_VERSION', '7');
+    responsesCreateMock.mockResolvedValue({ output_text: 'cinematic bottle photo' });
 
     const result = await createOpenAIAdapter().synthesizePrompt(baseInput);
     expect(result.nanobananaPrompt).toBe('cinematic bottle photo');
-  });
-
-  it('retries once and succeeds on wrapped JSON content', async () => {
-    setEnv('OPENAI_API_KEY', 'test-key');
-    const fetchMock = vi.spyOn(globalThis, 'fetch');
-    fetchMock
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ output_text: 'not-json' }), {
-          status: 200,
-          headers: { 'content-type': 'application/json' },
-        }),
-      )
-      .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify({
-            output: [
-              {
-                content: [{ text: 'Sure. {"nanobanana_prompt":"stylized studio portrait"} Thanks.' }],
-              },
-            ],
-          }),
-          { status: 200, headers: { 'content-type': 'application/json' } },
-        ),
-      );
-
-    const result = await createOpenAIAdapter().synthesizePrompt(baseInput);
-    expect(result.nanobananaPrompt).toBe('stylized studio portrait');
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
-
-  it('throws SYNTHESIS_PARSE_ERROR when both attempts fail', async () => {
-    setEnv('OPENAI_API_KEY', 'test-key');
-    vi.spyOn(globalThis, 'fetch').mockImplementation(async () =>
-      new Response(JSON.stringify({ output_text: 'still not JSON' }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
+    expect(result.model).toBe('prompt:pmpt_abc123:v7');
+    expect(responsesCreateMock).toHaveBeenCalledTimes(1);
+    expect(responsesCreateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        prompt: { id: 'pmpt_abc123', version: '7' },
       }),
     );
+  });
+
+  it('falls back to default prompt version when not set', async () => {
+    setEnv('OPENAI_API_KEY', 'test-key');
+    setEnv('OPENAI_PROMPT_ID', 'pmpt_abc123');
+    setEnv('OPENAI_PROMPT_VERSION', '');
+    responsesCreateMock.mockResolvedValue({ output_text: 'final prompt' });
+
+    const result = await createOpenAIAdapter().synthesizePrompt(baseInput);
+    expect(result.model).toBe('prompt:pmpt_abc123:v1');
+  });
+
+  it('throws SYNTHESIS_PARSE_ERROR when response has no text', async () => {
+    setEnv('OPENAI_API_KEY', 'test-key');
+    setEnv('OPENAI_PROMPT_ID', 'pmpt_abc123');
+    responsesCreateMock.mockResolvedValue({ output: [] });
 
     await expect(createOpenAIAdapter().synthesizePrompt(baseInput)).rejects.toMatchObject({
       code: 'SYNTHESIS_PARSE_ERROR',
@@ -99,15 +93,9 @@ describe('openai synthesis parser resilience', () => {
 
   it('applies prompt length cap', async () => {
     setEnv('OPENAI_API_KEY', 'test-key');
+    setEnv('OPENAI_PROMPT_ID', 'pmpt_abc123');
     setEnv('PROMPT_MAX_CHARS', '12');
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          output_text: '{"nanobanana_prompt":"this prompt is intentionally long"}',
-        }),
-        { status: 200, headers: { 'content-type': 'application/json' } },
-      ),
-    );
+    responsesCreateMock.mockResolvedValue({ output_text: 'this prompt is intentionally long' });
 
     const result = await createOpenAIAdapter().synthesizePrompt(baseInput);
     expect(result.nanobananaPrompt).toBe('this prompt ...');

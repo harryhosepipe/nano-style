@@ -1,3 +1,5 @@
+import OpenAI from 'openai';
+
 import { ApiError } from '../../api/errors';
 import { logProviderError, logProviderLatency, mapProviderErrorCode, nowIso } from '../../telemetry/logger';
 import { getDefaultAnswer } from '../../session/questions';
@@ -9,9 +11,8 @@ import type {
   OpenAISynthesisResult,
 } from './index';
 
-const OPENAI_URL = 'https://api.openai.com/v1/responses';
-const DEFAULT_OPENAI_MODEL = 'gpt-4.1-mini';
 const DEFAULT_PROMPT_CAP_CHARS = 1200;
+const DEFAULT_OPENAI_PROMPT_VERSION = '1';
 
 export const createOpenAIAdapter = (): OpenAIAdapter => ({
   async nextQuestion(input: OpenAINextQuestionInput): Promise<OpenAINextQuestionResult> {
@@ -33,8 +34,11 @@ export const createOpenAIAdapter = (): OpenAIAdapter => ({
     ].join('\n');
 
     try {
-      const prompt = await requestSynthesisWithRetry(userSummary);
-      const boundedPrompt = prompt.length > promptCap ? `${prompt.slice(0, promptCap)}...` : prompt;
+      const synthesis = await requestSynthesis(userSummary);
+      const boundedPrompt =
+        synthesis.nanobananaPrompt.length > promptCap
+          ? `${synthesis.nanobananaPrompt.slice(0, promptCap)}...`
+          : synthesis.nanobananaPrompt;
       logProviderLatency({
         ts: nowIso(),
         level: 'info',
@@ -46,7 +50,10 @@ export const createOpenAIAdapter = (): OpenAIAdapter => ({
         providerStatus: 'success',
         attempt: 1,
       });
-      return { nanobananaPrompt: boundedPrompt, model: import.meta.env.OPENAI_MODEL ?? DEFAULT_OPENAI_MODEL };
+      return {
+        nanobananaPrompt: boundedPrompt,
+        model: synthesis.model,
+      };
     } catch (error) {
       const code = error instanceof ApiError ? error.code : mapProviderErrorCode('openai');
       logProviderError({
@@ -69,59 +76,45 @@ export const createOpenAIAdapter = (): OpenAIAdapter => ({
   },
 });
 
-const requestSynthesisWithRetry = async (summary: string): Promise<string> => {
-  const first = await requestSynthesis(summary, false);
-  if (first) {
-    return first;
+const getPromptConfig = (): { id: string; version: string } => {
+  const id = import.meta.env.OPENAI_PROMPT_ID?.trim();
+  if (!id) {
+    throw new ApiError('OPENAI_ERROR');
   }
-  const second = await requestSynthesis(summary, true);
-  if (second) {
-    return second;
-  }
-  throw new ApiError('SYNTHESIS_PARSE_ERROR');
+  const version = import.meta.env.OPENAI_PROMPT_VERSION?.trim() || DEFAULT_OPENAI_PROMPT_VERSION;
+  return { id, version };
 };
 
-const requestSynthesis = async (summary: string, strictMode: boolean): Promise<string | null> => {
+const requestSynthesis = async (summary: string): Promise<OpenAISynthesisResult> => {
   const apiKey = import.meta.env.OPENAI_API_KEY?.trim();
   if (!apiKey) {
-    return fallbackSynthesis(summary);
+    return { nanobananaPrompt: fallbackSynthesis(summary), model: 'fallback' };
   }
-
-  const model = import.meta.env.OPENAI_MODEL ?? DEFAULT_OPENAI_MODEL;
-  const systemPrompt = strictMode
-    ? 'Return ONLY valid JSON: {"nanobanana_prompt":"..."} with no markdown or extra text.'
-    : 'Create one concise NanoBanana-ready prompt and return strict JSON: {"nanobanana_prompt":"..."}';
-
-  let response: Response;
+  const client = new OpenAI({ apiKey });
+  const promptConfig = getPromptConfig();
+  let response: Record<string, unknown>;
   try {
-    response = await fetch(OPENAI_URL, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        input: [
-          { role: 'system', content: [{ type: 'text', text: systemPrompt }] },
-          { role: 'user', content: [{ type: 'text', text: summary }] },
-        ],
-      }),
-    });
+    response = (await client.responses.create({
+      prompt: promptConfig,
+      input: [
+        {
+          role: 'user',
+          content: [{ type: 'input_text', text: summary }],
+        },
+      ],
+    })) as unknown as Record<string, unknown>;
   } catch {
     throw new ApiError('OPENAI_ERROR');
   }
 
-  if (!response.ok) {
-    throw new ApiError('OPENAI_ERROR');
-  }
-
-  const payload = (await response.json()) as Record<string, unknown>;
-  const outputText = extractOutputText(payload);
+  const outputText = extractOutputText(response)?.trim();
   if (!outputText) {
-    return null;
+    throw new ApiError('SYNTHESIS_PARSE_ERROR');
   }
-  return parsePromptFromJson(outputText);
+  return {
+    nanobananaPrompt: outputText,
+    model: `prompt:${promptConfig.id}:v${promptConfig.version}`,
+  };
 };
 
 const extractOutputText = (payload: Record<string, unknown>): string | null => {
@@ -143,31 +136,23 @@ const extractOutputText = (payload: Record<string, unknown>): string | null => {
       continue;
     }
     for (const chunk of content) {
-      if (chunk && typeof chunk === 'object' && 'text' in chunk && typeof (chunk as { text?: unknown }).text === 'string') {
+      if (!chunk || typeof chunk !== 'object') {
+        continue;
+      }
+      if ('text' in chunk && typeof (chunk as { text?: unknown }).text === 'string') {
+        return (chunk as { text: string }).text;
+      }
+      if (
+        'type' in chunk &&
+        (chunk as { type?: unknown }).type === 'output_text' &&
+        'text' in chunk &&
+        typeof (chunk as { text?: unknown }).text === 'string'
+      ) {
         return (chunk as { text: string }).text;
       }
     }
   }
   return null;
-};
-
-const parsePromptFromJson = (text: string): string | null => {
-  const start = text.indexOf('{');
-  const end = text.lastIndexOf('}');
-  if (start === -1 || end === -1 || end <= start) {
-    return null;
-  }
-  const maybeJson = text.slice(start, end + 1);
-  try {
-    const parsed = JSON.parse(maybeJson) as { nanobanana_prompt?: unknown };
-    if (typeof parsed.nanobanana_prompt !== 'string') {
-      return null;
-    }
-    const value = parsed.nanobanana_prompt.trim();
-    return value.length > 0 ? value : null;
-  } catch {
-    return null;
-  }
 };
 
 const fallbackSynthesis = (summary: string): string =>
