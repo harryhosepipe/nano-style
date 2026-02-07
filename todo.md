@@ -66,18 +66,18 @@
 - [x] P4-T5.2 Enforce safe client error messaging
 
 ## Phase 5 - Frontend Implementation (Core UX)
-- [ ] P5-T1 Build template selection and initial input screens
-- [ ] P5-T1.1 Implement template list UI from `/api/templates`
-- [ ] P5-T1.2 Implement initial input form with validation
-- [ ] P5-T2 Build fixed 3-step refinement UI with progress
-- [ ] P5-T2.1 Implement question submission and state transitions
-- [ ] P5-T2.2 Implement focus management and keyboard support
-- [ ] P5-T3 Build generating and result screens with iteration actions
-- [ ] P5-T3.1 Implement generating state and retry messaging
-- [ ] P5-T3.2 Ensure prompt data never appears client-side
-- [ ] P5-T4 Apply responsive styling with minimal client JS
-- [ ] P5-T4.1 Choose and configure UI styling path
-- [ ] P5-T4.2 Verify progress indicator clarity and mobile ergonomics
+- [x] P5-T1 Build template selection and initial input screens
+- [x] P5-T1.1 Implement template list UI from `/api/templates`
+- [x] P5-T1.2 Implement initial input form with validation
+- [x] P5-T2 Build fixed 3-step refinement UI with progress
+- [x] P5-T2.1 Implement question submission and state transitions
+- [x] P5-T2.2 Implement focus management and keyboard support
+- [x] P5-T3 Build generating and result screens with iteration actions
+- [x] P5-T3.1 Implement generating state and retry messaging
+- [x] P5-T3.2 Ensure prompt data never appears client-side
+- [x] P5-T4 Apply responsive styling with minimal client JS
+- [x] P5-T4.1 Choose and configure UI styling path
+- [x] P5-T4.2 Verify progress indicator clarity and mobile ergonomics
 
 ## Phase 6 - End-to-End Integration + Feature Completion
 - [ ] P6-T1 Wire frontend API client to production endpoint contracts
