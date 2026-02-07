@@ -91,18 +91,18 @@
 - [x] P6-T3.2 Validate no prompt leakage in integration transport
 
 ## Phase 7 - Quality: Testing + Security + Performance + Accessibility + Observability
-- [ ] P7-T1 Implement unit tests for contracts and parsing logic
-- [ ] P7-T1.1 Add schema validation test matrix
-- [ ] P7-T1.2 Add synthesis parser resilience tests
-- [ ] P7-T2 Implement integration and end-to-end smoke tests
-- [ ] P7-T2.1 Add backend integration tests with mocked providers
-- [ ] P7-T2.2 Add e2e smoke for core MVP journey
-- [ ] P7-T3 Run security and privacy verification baseline
-- [ ] P7-T3.1 Validate server-only secret and prompt boundaries
-- [ ] P7-T3.2 Run dependency and header hardening checks
-- [ ] P7-T4 Validate performance, accessibility, and observability targets
-- [ ] P7-T4.1 Measure time-to-image and page-load performance
-- [ ] P7-T4.2 Validate keyboard/focus accessibility and telemetry completeness
+- [x] P7-T1 Implement unit tests for contracts and parsing logic
+- [x] P7-T1.1 Add schema validation test matrix
+- [x] P7-T1.2 Add synthesis parser resilience tests
+- [x] P7-T2 Implement integration and end-to-end smoke tests
+- [x] P7-T2.1 Add backend integration tests with mocked providers
+- [x] P7-T2.2 Add e2e smoke for core MVP journey
+- [x] P7-T3 Run security and privacy verification baseline
+- [x] P7-T3.1 Validate server-only secret and prompt boundaries
+- [x] P7-T3.2 Run dependency and header hardening checks
+- [x] P7-T4 Validate performance, accessibility, and observability targets
+- [x] P7-T4.1 Measure time-to-image and page-load performance
+- [x] P7-T4.2 Validate keyboard/focus accessibility and telemetry completeness
 
 ## Phase 8 - Release Prep + Deployment + Launch
 - [ ] P8-T1 Build release checklist and operational runbooks

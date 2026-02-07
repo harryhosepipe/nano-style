@@ -5,6 +5,7 @@ import {
   isAccessRequestAuthorized,
   readAccessGateConfig,
 } from './security/access-gate';
+import { applyResponseHeaders } from './security/headers';
 import { verifyAndExtractSessionId } from './session/cookie';
 
 export const onRequest = defineMiddleware(async ({ request, locals, cookies }, next) => {
@@ -23,18 +24,18 @@ export const onRequest = defineMiddleware(async ({ request, locals, cookies }, n
   const gateConfig = readAccessGateConfig(import.meta.env as Record<string, string | undefined>);
   if (!gateConfig) {
     const response = await next();
-    response.headers.set(REQUEST_ID_HEADER, String(locals.requestId));
+    applyResponseHeaders(response, String(locals.requestId));
     return response;
   }
 
   const authHeader = request.headers.get('authorization');
   if (isAccessRequestAuthorized(authHeader, gateConfig)) {
     const response = await next();
-    response.headers.set(REQUEST_ID_HEADER, String(locals.requestId));
+    applyResponseHeaders(response, String(locals.requestId));
     return response;
   }
 
   const denied = buildAccessDeniedResponse(gateConfig.realm);
-  denied.headers.set(REQUEST_ID_HEADER, String(locals.requestId));
+  applyResponseHeaders(denied, String(locals.requestId));
   return denied;
 });
