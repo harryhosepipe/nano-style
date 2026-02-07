@@ -24,15 +24,15 @@
 - [x] P1-T3.2 Define logging fields and redaction rules
 
 ## Phase 2 - Dev Environment + Tooling + CI/CD + Infra Baseline
-- [ ] P2-T1 Implement environment and secrets management baseline
-- [ ] P2-T1.1 Define required env var contract
-- [ ] P2-T1.2 Document local + CI secret provisioning
-- [ ] P2-T2 Build CI pipeline and release hygiene baseline
-- [ ] P2-T2.1 Add CI workflow for lint/test/build
-- [ ] P2-T2.2 Add dependency audit and artifact retention policy
-- [ ] P2-T3 Prepare internal sharing infrastructure via Cloudflare Tunnel
-- [ ] P2-T3.1 Create tunnel start scripts and runbook
-- [ ] P2-T3.2 Decide and implement optional password/access gate
+- [x] P2-T1 Implement environment and secrets management baseline
+- [x] P2-T1.1 Define required env var contract
+- [x] P2-T1.2 Document local + CI secret provisioning
+- [x] P2-T2 Build CI pipeline and release hygiene baseline
+- [x] P2-T2.1 Add CI workflow for lint/test/build
+- [x] P2-T2.2 Add dependency audit and artifact retention policy
+- [x] P2-T3 Prepare internal sharing infrastructure via Cloudflare Tunnel
+- [x] P2-T3.1 Create tunnel start scripts and runbook
+- [x] P2-T3.2 Decide and implement optional password/access gate
 
 ## Phase 3 - Data Model + API Contracts + Integration Contracts
 - [ ] P3-T1 Define canonical domain schemas and shared TypeScript types
