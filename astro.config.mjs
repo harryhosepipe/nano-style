@@ -11,4 +11,10 @@ export default defineConfig({
   server: {
     host: true,
   },
+  vite: {
+    server: {
+      // Allow Cloudflare quick tunnel hostnames during local sharing.
+      allowedHosts: ['.trycloudflare.com'],
+    },
+  },
 });
