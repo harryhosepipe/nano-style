@@ -12,7 +12,7 @@ export const SessionStatusSchema = z.enum([
   'error',
 ]);
 
-export const QuestionIndexSchema = z.number().int().min(1).max(3);
+export const QuestionIndexSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
 
 export const ISODateTimeSchema = z.iso.datetime({ offset: true });
 

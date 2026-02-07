@@ -49,21 +49,21 @@
 - [x] P3-T4.2 Define provider latency/error log payload schema
 
 ## Phase 4 - Backend Implementation (Core Services)
-- [ ] P4-T1 Implement session middleware and in-memory state service
-- [ ] P4-T1.1 Implement signed cookie issuance/validation
-- [ ] P4-T1.2 Implement session lifecycle operations
-- [ ] P4-T2 Implement template/session endpoints (`/api/templates`, `/api/session/start`, `/api/session/answer`)
-- [ ] P4-T2.1 Implement static template catalog endpoint
-- [ ] P4-T2.2 Implement start and answer stepper orchestration
-- [ ] P4-T3 Implement OpenAI refinement/synthesis service via adapter
-- [ ] P4-T3.1 Implement strict JSON parse with one retry
-- [ ] P4-T3.2 Enforce prompt length cap and default infill strategy
-- [ ] P4-T4 Implement NanoBanana integration and `/api/generate` endpoint
-- [ ] P4-T4.1 Implement timeout/retry/error mapping for generation calls
-- [ ] P4-T4.2 Support URL and base64/blob result handling
-- [ ] P4-T5 Add baseline observability and production-sane error handling
-- [ ] P4-T5.1 Emit funnel and latency events at each stage
-- [ ] P4-T5.2 Enforce safe client error messaging
+- [x] P4-T1 Implement session middleware and in-memory state service
+- [x] P4-T1.1 Implement signed cookie issuance/validation
+- [x] P4-T1.2 Implement session lifecycle operations
+- [x] P4-T2 Implement template/session endpoints (`/api/templates`, `/api/session/start`, `/api/session/answer`)
+- [x] P4-T2.1 Implement static template catalog endpoint
+- [x] P4-T2.2 Implement start and answer stepper orchestration
+- [x] P4-T3 Implement OpenAI refinement/synthesis service via adapter
+- [x] P4-T3.1 Implement strict JSON parse with one retry
+- [x] P4-T3.2 Enforce prompt length cap and default infill strategy
+- [x] P4-T4 Implement NanoBanana integration and `/api/generate` endpoint
+- [x] P4-T4.1 Implement timeout/retry/error mapping for generation calls
+- [x] P4-T4.2 Support URL and base64/blob result handling
+- [x] P4-T5 Add baseline observability and production-sane error handling
+- [x] P4-T5.1 Emit funnel and latency events at each stage
+- [x] P4-T5.2 Enforce safe client error messaging
 
 ## Phase 5 - Frontend Implementation (Core UX)
 - [ ] P5-T1 Build template selection and initial input screens

@@ -23,6 +23,10 @@ This document defines the canonical environment contract for NanoStyle MVP.
 | --- | --- | --- | --- |
 | `NODE_ENV` | `development` | `development`, `test`, `production` | Runtime mode. |
 | `PORT` | framework default | integer 1-65535 | Local server port override for Astro runtime. |
+| `OPENAI_MODEL` | `gpt-4.1-mini` | non-empty string | OpenAI model id for synthesis request. |
+| `PROMPT_MAX_CHARS` | `1200` | integer >= 200 | Max synthesized prompt length before truncation. |
+| `NANOBANANA_TIMEOUT_MS` | `25000` | integer >= 1000 | Per-request timeout for NanoBanana adapter calls. |
+| `NANOBANANA_RETRIES` | `2` | integer >= 1 | Retry attempts for NanoBanana generation call. |
 | `ACCESS_GATE_USER` | `nanostyle` | non-empty string | Username for optional basic-auth access gate. |
 | `ACCESS_GATE_PASSWORD` | none | non-empty string | Enables optional basic-auth access gate when set. |
 | `ACCESS_GATE_REALM` | `NanoStyle Internal` | non-empty string | Browser auth prompt realm for access gate. |
