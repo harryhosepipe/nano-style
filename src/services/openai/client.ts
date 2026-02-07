@@ -150,8 +150,8 @@ const requestSynthesis = async (summary: string): Promise<OpenAISynthesisResult>
         },
       ],
     })) as unknown as Record<string, unknown>;
-  } catch {
-    throw new ApiError('OPENAI_ERROR');
+  } catch (error) {
+    throw mapOpenAIRequestError(error);
   }
 
   const outputText = extractOutputText(response)?.trim();
@@ -204,6 +204,42 @@ const extractOutputText = (payload: Record<string, unknown>): string | null => {
 
 const fallbackSynthesis = (summary: string): string =>
   `cinematic photograph, ${summary.replaceAll('\n', ', ')}, realistic texture, balanced composition, high detail`;
+
+const mapOpenAIRequestError = (error: unknown): ApiError => {
+  const maybeError = error as { status?: unknown; message?: unknown };
+  const status = typeof maybeError?.status === 'number' ? maybeError.status : undefined;
+
+  if (status === 401) {
+    return new ApiError('OPENAI_ERROR', 502, 'OpenAI auth failed. Check OPENAI_API_KEY.', false);
+  }
+  if (status === 403) {
+    return new ApiError('OPENAI_ERROR', 502, 'OpenAI denied this prompt. Check prompt permissions and project access.', false);
+  }
+  if (status === 404) {
+    return new ApiError(
+      'OPENAI_ERROR',
+      502,
+      'OpenAI prompt not found. Verify OPENAI_PROMPT_ID and OPENAI_PROMPT_VERSION.',
+      false,
+    );
+  }
+  if (status === 429) {
+    return new ApiError('OPENAI_ERROR', 502, 'OpenAI rate limit hit. Retry in a moment.', true);
+  }
+  if (status === 400) {
+    return new ApiError(
+      'OPENAI_ERROR',
+      502,
+      'OpenAI rejected the request. Confirm prompt variables and request input format.',
+      false,
+    );
+  }
+
+  if (typeof maybeError?.message === 'string' && maybeError.message.length > 0) {
+    return new ApiError('OPENAI_ERROR', 502, `OpenAI request failed: ${maybeError.message}`, true);
+  }
+  return new ApiError('OPENAI_ERROR');
+};
 
 const getFixedQuestion = (questionIndex: 1 | 2 | 3): string => {
   switch (questionIndex) {
