@@ -8,7 +8,11 @@
    - `bun run lint`
    - `bun run test`
    - `bun run build`
-4. Close completed issue: `bd close <id> --reason "Completed" --json`.
+4. If your change introduces or modifies config needs, update:
+   - `docs/env-contract.md`
+   - `.env.example`
+   - `docs/secrets-provisioning.md`
+5. Close completed issue: `bd close <id> --reason "Completed" --json`.
 
 ## Commit Conventions
 

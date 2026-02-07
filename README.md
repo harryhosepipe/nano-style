@@ -15,6 +15,7 @@ cp .env.example .env
 ```
 
 See `docs/env-contract.md` for validation rules and CI/runtime requirements.
+See `docs/secrets-provisioning.md` for local setup and GitHub Actions secret provisioning.
 
 ## Development
 
