@@ -83,7 +83,7 @@ export const createOpenAIAdapter = (): OpenAIAdapter => ({
     }
 
     try {
-      const synthesis = await requestSynthesis(text);
+      const synthesis = await requestSynthesis(text, input.imageDataUrl);
       logProviderLatency({
         ts: nowIso(),
         level: 'info',
@@ -127,13 +127,21 @@ const getPromptConfig = (): { id: string; version: string } => {
   return { id, version };
 };
 
-const requestSynthesis = async (summary: string): Promise<OpenAISynthesisResult> => {
+const requestSynthesis = async (summary: string, imageDataUrl?: string): Promise<OpenAISynthesisResult> => {
   const apiKey = import.meta.env.OPENAI_API_KEY?.trim();
   if (!apiKey) {
     return { nanobananaPrompt: fallbackSynthesis(summary), model: 'fallback' };
   }
   const client = new OpenAI({ apiKey });
   const promptConfig = getPromptConfig();
+  const content: Array<
+    { type: 'input_text'; text: string } | { type: 'input_image'; image_url: string; detail: 'auto' }
+  > = [
+    { type: 'input_text', text: summary },
+  ];
+  if (imageDataUrl) {
+    content.push({ type: 'input_image', image_url: imageDataUrl, detail: 'auto' });
+  }
   let response: Record<string, unknown>;
   try {
     response = (await client.responses.create({
@@ -141,7 +149,7 @@ const requestSynthesis = async (summary: string): Promise<OpenAISynthesisResult>
       input: [
         {
           role: 'user',
-          content: [{ type: 'input_text', text: summary }],
+          content,
         },
       ],
     })) as unknown as Record<string, unknown>;

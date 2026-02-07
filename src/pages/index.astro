@@ -193,7 +193,7 @@
       <section class="hero">
         <div class="kicker">NanoStyle MVP</div>
         <h1 id="page-title" tabindex="-1">OpenAI Connectivity Test</h1>
-        <p class="hint">Send text in, confirm text comes back from your OpenAI prompt config.</p>
+        <p class="hint">Send text with an optional image, confirm multimodal responses come back from your OpenAI prompt config.</p>
       </section>
 
       <section class="panel">
@@ -203,6 +203,11 @@
             <label for="input-text">Input text</label>
             <textarea id="input-text" name="inputText" placeholder="Type any text and submit to test OpenAI connectivity."></textarea>
             <div class="hint">Ctrl/Cmd+Enter submits quickly.</div>
+          </div>
+          <div>
+            <label for="input-image">Image (optional)</label>
+            <input id="input-image" name="inputImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
+            <div class="hint">Supported: PNG, JPEG, WEBP, GIF. Max 10MB.</div>
           </div>
           <div class="row">
             <button class="primary" type="submit" id="submit-btn">Send to OpenAI</button>
@@ -235,6 +240,7 @@
       const els = {
         form: document.getElementById('app-form'),
         input: document.getElementById('input-text'),
+        image: document.getElementById('input-image'),
         submit: document.getElementById('submit-btn'),
         clear: document.getElementById('clear-btn'),
         status: document.getElementById('status'),
@@ -249,9 +255,16 @@
 
         clearStatus();
         const text = els.input.value.trim();
+        const image = els.image.files?.[0] ?? null;
         if (text.length === 0) {
           setError('Please enter text first.');
           return;
+        }
+
+        const formData = new FormData();
+        formData.set('text', text);
+        if (image) {
+          formData.set('image', image);
         }
 
         state.submitting = true;
@@ -259,7 +272,7 @@
         try {
           const result = await request('/api/openai/test', {
             method: 'POST',
-            body: JSON.stringify({ text }),
+            body: formData,
           });
           els.outputText.textContent = result.outputText;
           els.outputModel.textContent = `Model: ${result.model}`;
@@ -276,6 +289,7 @@
 
       els.clear.addEventListener('click', () => {
         els.input.value = '';
+        els.image.value = '';
         els.output.hidden = true;
         els.outputText.textContent = '';
         els.outputModel.textContent = '';
@@ -294,10 +308,11 @@
         const requestId = `ui_${crypto.randomUUID().replaceAll('-', '')}`;
         let response;
         try {
+          const hasJsonBody = init.body && !(init.body instanceof FormData);
           response = await fetch(url, {
             ...init,
             headers: {
-              ...(init.body ? { 'content-type': 'application/json' } : {}),
+              ...(hasJsonBody ? { 'content-type': 'application/json' } : {}),
               'x-request-id': requestId,
               ...(init.headers || {}),
             },

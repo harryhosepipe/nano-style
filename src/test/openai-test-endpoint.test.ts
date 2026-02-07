@@ -65,4 +65,27 @@ describe('openai test endpoint', () => {
     expect(payload.outputText).toContain('test api connectivity message');
     expect(payload.model).toBe('fallback');
   });
+
+  it('accepts multipart form with optional image upload', async () => {
+    setEnv('OPENAI_API_KEY', '');
+    const formData = new FormData();
+    formData.set('text', 'test multipart connectivity');
+    formData.set('image', new File(['fakepng'], 'sample.png', { type: 'image/png' }));
+
+    const context = {
+      request: new Request('http://local/api/openai/test', {
+        method: 'POST',
+        body: formData,
+      }),
+      locals: { requestId: 'req_openai_test_multipart' },
+      cookies: new MockCookies(),
+    } as unknown as Parameters<typeof openaiTestPost>[0];
+
+    const response = await openaiTestPost(context);
+    const payload = (await response.json()) as { ok: boolean; outputText: string; model: string };
+
+    expect(payload.ok).toBe(true);
+    expect(payload.outputText).toContain('test multipart connectivity');
+    expect(payload.model).toBe('fallback');
+  });
 });

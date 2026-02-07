@@ -71,6 +71,32 @@ describe('openai prompt-based synthesis', () => {
     );
   });
 
+  it('includes input_image part when image data url is provided', async () => {
+    setEnv('OPENAI_API_KEY', 'test-key');
+    setEnv('OPENAI_PROMPT_ID', 'pmpt_abc123');
+    responsesCreateMock.mockResolvedValue({ output_text: 'image-aware prompt' });
+
+    await createOpenAIAdapter().synthesizeText({
+      text: 'describe this reference image',
+      imageDataUrl: 'data:image/png;base64,AAAA',
+      requestId: 'req_openai_text_with_image',
+    });
+
+    expect(responsesCreateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        input: [
+          {
+            role: 'user',
+            content: [
+              { type: 'input_text', text: 'describe this reference image' },
+              { type: 'input_image', image_url: 'data:image/png;base64,AAAA', detail: 'auto' },
+            ],
+          },
+        ],
+      }),
+    );
+  });
+
   it('falls back to default prompt version when not set', async () => {
     setEnv('OPENAI_API_KEY', 'test-key');
     setEnv('OPENAI_PROMPT_ID', 'pmpt_abc123');

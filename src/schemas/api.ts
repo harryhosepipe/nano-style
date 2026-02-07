@@ -101,6 +101,7 @@ export const SynthesizeResponseSchema = z.union([SynthesizeSuccessResponseSchema
 
 export const OpenAITestRequestSchema = z.object({
   text: z.string().min(1),
+  imageDataUrl: z.string().min(1).startsWith('data:image/').optional(),
 });
 
 export const OpenAITestSuccessResponseSchema = z.object({

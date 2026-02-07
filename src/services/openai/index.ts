@@ -26,6 +26,7 @@ export type OpenAISynthesisResult = {
 
 export type OpenAITextSynthesisInput = {
   text: string;
+  imageDataUrl?: string;
   requestId: string;
 };
 
