@@ -14,6 +14,16 @@
    - `docs/secrets-provisioning.md`
 5. Close completed issue: `bd close <id> --reason "Completed" --json`.
 
+## CI Baseline
+
+- Workflow: `.github/workflows/ci.yml`
+- Policy: `docs/ci-release-hygiene.md`
+- Default required checks:
+  - lint
+  - test
+  - build
+  - dependency audit
+
 ## Commit Conventions
 
 Use concise, scoped commit subjects:

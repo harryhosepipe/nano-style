@@ -31,6 +31,8 @@ bun run test
 bun run build
 ```
 
+CI enforces these checks plus dependency audit. See `docs/ci-release-hygiene.md`.
+
 ## Project Structure
 
 - `src/api` server endpoints and route handlers
