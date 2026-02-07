@@ -4,6 +4,7 @@ import { API_ENDPOINTS, REQUEST_ID_HEADER, SESSION_COOKIE_NAME } from '../api/co
 import {
   ErrorResponseSchema,
   GenerateResponseSchema,
+  OpenAITestResponseSchema,
   SessionAnswerResponseSchema,
   SessionResetResponseSchema,
   SessionStartRequestSchema,
@@ -89,6 +90,7 @@ describe('api schemas', () => {
   it('exports stable envelope constants', () => {
     expect(REQUEST_ID_HEADER).toBe('x-request-id');
     expect(SESSION_COOKIE_NAME).toBe('nanostyle.sid');
+    expect(API_ENDPOINTS.openaiTest).toBe('/api/openai/test');
     expect(API_ENDPOINTS.synthesize).toBe('/api/synthesize');
   });
 
@@ -112,6 +114,17 @@ describe('api schemas', () => {
         ok: true,
         requestId: 'req_12345678',
         outputText: 'cinematic studio portrait',
+        model: 'prompt:pmpt_abc:v1',
+      }).ok,
+    ).toBe(true);
+  });
+
+  it('accepts openai test response variant', () => {
+    expect(
+      OpenAITestResponseSchema.parse({
+        ok: true,
+        requestId: 'req_12345678',
+        outputText: 'connectivity ok',
         model: 'prompt:pmpt_abc:v1',
       }).ok,
     ).toBe(true);

@@ -64,6 +64,7 @@ Latest launch baseline snapshot: `docs/launch-baseline-2026-02-07.md`.
 ## Backend Endpoints
 
 - `GET /api/templates`
+- `POST /api/openai/test`
 - `POST /api/session/start`
 - `POST /api/session/answer`
 - `POST /api/synthesize`

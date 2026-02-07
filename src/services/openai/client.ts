@@ -74,6 +74,53 @@ export const createOpenAIAdapter = (): OpenAIAdapter => ({
       throw new ApiError('OPENAI_ERROR');
     }
   },
+
+  async synthesizeText(input): Promise<OpenAISynthesisResult> {
+    const startedAt = Date.now();
+    const promptCap = Number.parseInt(import.meta.env.PROMPT_MAX_CHARS ?? '', 10) || DEFAULT_PROMPT_CAP_CHARS;
+    const text = input.text.trim();
+    if (text.length === 0) {
+      throw new ApiError('VALIDATION_ERROR', 400, 'Text is required.', false);
+    }
+
+    try {
+      const synthesis = await requestSynthesis(text);
+      const boundedPrompt =
+        synthesis.nanobananaPrompt.length > promptCap
+          ? `${synthesis.nanobananaPrompt.slice(0, promptCap)}...`
+          : synthesis.nanobananaPrompt;
+      logProviderLatency({
+        ts: nowIso(),
+        level: 'info',
+        event: 'provider_call_completed',
+        requestId: input.requestId,
+        provider: 'openai',
+        operation: 'synthesize_text',
+        latencyMs: Date.now() - startedAt,
+        providerStatus: 'success',
+        attempt: 1,
+      });
+      return { nanobananaPrompt: boundedPrompt, model: synthesis.model };
+    } catch (error) {
+      const code = error instanceof ApiError ? error.code : mapProviderErrorCode('openai');
+      logProviderError({
+        ts: nowIso(),
+        level: 'error',
+        event: 'provider_call_failed',
+        requestId: input.requestId,
+        provider: 'openai',
+        operation: 'synthesize_text',
+        latencyMs: Date.now() - startedAt,
+        errorCode: code,
+        providerStatus: code === 'PROVIDER_TIMEOUT' ? 'timeout' : 'error',
+        attempt: 1,
+      });
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError('OPENAI_ERROR');
+    }
+  },
 });
 
 const getPromptConfig = (): { id: string; version: string } => {

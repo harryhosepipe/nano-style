@@ -24,7 +24,13 @@ export type OpenAISynthesisResult = {
   model: string;
 };
 
+export type OpenAITextSynthesisInput = {
+  text: string;
+  requestId: string;
+};
+
 export type OpenAIAdapter = {
   nextQuestion(input: OpenAINextQuestionInput): Promise<OpenAINextQuestionResult>;
   synthesizePrompt(input: OpenAISynthesisInput): Promise<OpenAISynthesisResult>;
+  synthesizeText(input: OpenAITextSynthesisInput): Promise<OpenAISynthesisResult>;
 };

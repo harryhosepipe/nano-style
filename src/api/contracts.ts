@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
   sessionStart: '/api/session/start',
   sessionAnswer: '/api/session/answer',
   sessionReset: '/api/session/reset',
+  openaiTest: '/api/openai/test',
   synthesize: '/api/synthesize',
   generate: '/api/generate',
 } as const;

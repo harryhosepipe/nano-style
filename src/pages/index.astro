@@ -5,7 +5,7 @@
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>NanoStyle Prompt Refinery</title>
+    <title>NanoStyle OpenAI Connectivity Test</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -22,8 +22,6 @@
         --line: #e3d8c7;
         --brand: #d64f2e;
         --brand-strong: #bb3b1f;
-        --ok: #2f7e42;
-        --warn: #9f5e00;
       }
 
       * {
@@ -42,7 +40,7 @@
       }
 
       .shell {
-        max-width: 980px;
+        max-width: 900px;
         margin: 0 auto;
         padding: 2rem 1rem 4rem;
       }
@@ -76,34 +74,6 @@
         box-shadow: 0 16px 36px -26px rgba(67, 39, 24, 0.4);
       }
 
-      .progress {
-        margin: 0 0 1rem;
-      }
-
-      .progress-meta {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.45rem;
-        color: var(--ink-soft);
-        font-size: 0.9rem;
-      }
-
-      .progress-track {
-        width: 100%;
-        height: 10px;
-        background: #f0e8dc;
-        border-radius: 999px;
-        overflow: hidden;
-      }
-
-      .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #e97540, #d64f2e);
-        border-radius: 999px;
-        width: 0%;
-        transition: width 220ms ease;
-      }
-
       .stack {
         display: grid;
         gap: 0.9rem;
@@ -115,8 +85,7 @@
         margin-bottom: 0.4rem;
       }
 
-      textarea,
-      input[type='text'] {
+      textarea {
         width: 100%;
         border: 1px solid #cfc2ae;
         border-radius: 12px;
@@ -124,46 +93,14 @@
         font: inherit;
         color: var(--ink);
         background: #fff;
-      }
-
-      textarea {
-        min-height: 110px;
+        min-height: 140px;
         resize: vertical;
       }
 
       textarea:focus,
-      input:focus,
       button:focus-visible {
         outline: 3px solid rgba(214, 79, 46, 0.35);
         outline-offset: 1px;
-      }
-
-      .template-grid {
-        display: grid;
-        gap: 0.7rem;
-      }
-
-      .template-btn {
-        border: 1px solid #d8cab5;
-        background: #fff8ed;
-        border-radius: 14px;
-        padding: 0.85rem;
-        text-align: left;
-        cursor: pointer;
-      }
-
-      .template-btn[aria-pressed='true'] {
-        border-color: var(--brand);
-        box-shadow: inset 0 0 0 1px var(--brand);
-      }
-
-      .template-name {
-        font-weight: 700;
-      }
-
-      .template-desc {
-        font-size: 0.92rem;
-        color: var(--ink-soft);
       }
 
       .row {
@@ -205,26 +142,20 @@
       }
 
       .status[data-kind='ok'] {
-        color: var(--ok);
+        color: #2f7e42;
       }
 
-      .image-wrap {
+      .output-wrap {
         border: 1px dashed #d8c7ad;
         border-radius: 14px;
         padding: 0.9rem;
         background: #fffaf4;
       }
 
-      .prompt-output {
+      .output-text {
         margin: 0;
         white-space: pre-wrap;
         line-height: 1.45;
-      }
-
-      img {
-        max-width: 100%;
-        display: block;
-        border-radius: 10px;
       }
 
       .hint {
@@ -246,55 +177,32 @@
     <main class="shell">
       <section class="hero">
         <div class="kicker">NanoStyle MVP</div>
-        <h1 id="page-title" tabindex="-1">Prompt Refinery</h1>
-        <p class="hint">Template-driven refinement, 3 fixed questions, server-side synthesis only.</p>
+        <h1 id="page-title" tabindex="-1">OpenAI Connectivity Test</h1>
+        <p class="hint">Send text in, confirm text comes back from your OpenAI prompt config.</p>
       </section>
-      <section class="panel">
-        <div id="progress" class="progress" hidden>
-          <div class="progress-meta">
-            <span id="progress-label">Question 1 of 3</span>
-            <span id="progress-percent">33%</span>
-          </div>
-          <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
-        </div>
 
+      <section class="panel">
         <div id="status" class="status" aria-live="polite"></div>
         <form id="app-form" class="stack" novalidate>
-          <div id="view"></div>
+          <div>
+            <label for="input-text">Input text</label>
+            <textarea id="input-text" name="inputText" placeholder="Type any text and submit to test OpenAI connectivity."></textarea>
+            <div class="hint">Ctrl/Cmd+Enter submits quickly.</div>
+          </div>
+          <div class="row">
+            <button class="primary" type="submit" id="submit-btn">Send to OpenAI</button>
+            <button class="ghost" type="button" id="clear-btn">Clear</button>
+          </div>
         </form>
+
+        <div id="output" class="output-wrap" hidden>
+          <p id="output-text" class="output-text"></p>
+          <div id="output-model" class="hint"></div>
+        </div>
       </section>
     </main>
 
     <script type="module" is:inline>
-
-      const state = {
-        stage: 'loading',
-        templates: [],
-        selectedTemplateId: '',
-        initialInput: '',
-        sessionId: '',
-        questionIndex: 1,
-        questionText: '',
-        answerText: '',
-        prompt: '',
-        promptModel: '',
-        error: '',
-        notice: '',
-        isSubmitting: false,
-        editFromQuestionIndex: null,
-      };
-
-      const els = {
-        view: document.getElementById('view'),
-        form: document.getElementById('app-form'),
-        progress: document.getElementById('progress'),
-        progressLabel: document.getElementById('progress-label'),
-        progressPercent: document.getElementById('progress-percent'),
-        progressFill: document.getElementById('progress-fill'),
-        status: document.getElementById('status'),
-        title: document.getElementById('page-title'),
-      };
-
       class FrontendApiError extends Error {
         constructor(message, code = 'INTERNAL_ERROR', retryable = false) {
           super(message);
@@ -303,297 +211,71 @@
         }
       }
 
-      const api = {
-        templates() {
-          return request('/api/templates', { method: 'GET' }, isTemplatesResponse);
-        },
-        start(payload) {
-          return request('/api/session/start', { method: 'POST', body: JSON.stringify(payload) }, isStartResponse);
-        },
-        answer(payload) {
-          return request('/api/session/answer', { method: 'POST', body: JSON.stringify(payload) }, isAnswerResponse);
-        },
-        reset(payload) {
-          return request('/api/session/reset', { method: 'POST', body: JSON.stringify(payload) }, isResetResponse);
-        },
-        synthesize(payload) {
-          return request('/api/synthesize', { method: 'POST', body: JSON.stringify(payload) }, isSynthesizeResponse);
-        },
+      const state = {
+        submitting: false,
+        notice: '',
+        error: '',
       };
 
-      init().catch((error) => {
-        setError(toUserMessage(error, 'Failed to load templates.'));
-      });
-
-      async function init() {
-        const response = await api.templates();
-        state.templates = response.templates;
-        state.selectedTemplateId = state.templates[0]?.id || '';
-        state.stage = 'template';
-        render();
-        focusInput();
-      }
+      const els = {
+        form: document.getElementById('app-form'),
+        input: document.getElementById('input-text'),
+        submit: document.getElementById('submit-btn'),
+        clear: document.getElementById('clear-btn'),
+        status: document.getElementById('status'),
+        output: document.getElementById('output'),
+        outputText: document.getElementById('output-text'),
+        outputModel: document.getElementById('output-model'),
+      };
 
       els.form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        if (state.isSubmitting) return;
+        if (state.submitting) return;
+
         clearStatus();
+        const text = els.input.value.trim();
+        if (text.length === 0) {
+          setError('Please enter text first.');
+          return;
+        }
 
+        state.submitting = true;
+        render();
         try {
-          if (state.stage === 'template') {
-            const initial = getInitialInputValue().trim();
-            state.initialInput = initial;
-            if (initial.length < 8) throw new Error('Initial input must be at least 8 characters.');
-            state.isSubmitting = true;
-            render();
-            const response = await api.start({ templateId: state.selectedTemplateId, initial });
-            state.initialInput = initial;
-            state.sessionId = response.sessionId;
-            state.questionIndex = response.questionIndex;
-            state.questionText = response.questionText;
-            state.answerText = '';
-            state.stage = 'refinement';
-          } else if (state.stage === 'refinement') {
-            const answer = getAnswerValue().trim();
-            state.answerText = answer;
-            if (answer.length === 0) throw new Error('Please provide an answer before continuing.');
-            state.isSubmitting = true;
-            render();
-            const payload = { sessionId: state.sessionId, answer };
-            if (state.editFromQuestionIndex) payload.editFromQuestionIndex = state.editFromQuestionIndex;
-            const response = await api.answer(payload);
-            state.editFromQuestionIndex = null;
-            if (response.done) {
-              state.stage = 'ready_to_generate';
-              state.notice = 'Refinement complete. Generate your image.';
-            } else {
-              state.questionIndex = response.questionIndex;
-              state.questionText = response.questionText;
-              state.answerText = '';
-            }
-          } else if (state.stage === 'ready_to_generate' || state.stage === 'result' || state.stage === 'error') {
-            await runSynthesize();
-          }
+          const result = await request('/api/openai/test', {
+            method: 'POST',
+            body: JSON.stringify({ text }),
+          });
+          els.outputText.textContent = result.outputText;
+          els.outputModel.textContent = `Model: ${result.model}`;
+          els.output.hidden = false;
+          state.notice = 'OpenAI response received.';
+          state.error = '';
         } catch (error) {
-          setError(toUserMessage(error, 'Request failed. Try again.'));
+          setError(toUserMessage(error, 'Request failed.'));
         } finally {
-          state.isSubmitting = false;
+          state.submitting = false;
           render();
-          focusInput();
         }
       });
 
-      els.view.addEventListener('click', async (event) => {
-        const target = event.target.closest('[data-action]');
-        if (!target) return;
-
-        const action = target.getAttribute('data-action');
-        if (action === 'pick-template') {
-          state.selectedTemplateId = target.getAttribute('data-template-id') || '';
-          render();
-          return;
-        }
-
-        if (action === 'change-answers') {
-          state.stage = 'refinement';
-          state.questionIndex = 1;
-          state.questionText =
-            "What are we generating (product/lifestyle) and what's the moment? (subject + action + setting)";
-          state.answerText = '';
-          state.editFromQuestionIndex = 1;
-          state.notice = 'Editing answers from question 1.';
-          render();
-          focusInput();
-          return;
-        }
-
-        if (action === 'start-over') {
-          await resetSessionAndView();
-          render();
-          focusInput();
-          return;
-        }
-
-        if (action === 'generate-another') {
-          clearStatus();
-          await runSynthesize();
-          render();
-          focusInput();
-          return;
-        }
+      els.clear.addEventListener('click', () => {
+        els.input.value = '';
+        els.output.hidden = true;
+        els.outputText.textContent = '';
+        els.outputModel.textContent = '';
+        clearStatus();
+        els.input.focus();
       });
 
-      els.view.addEventListener('keydown', (event) => {
+      els.input.addEventListener('keydown', (event) => {
         if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
           event.preventDefault();
           els.form.requestSubmit();
         }
       });
 
-      async function runSynthesize() {
-        if (!state.sessionId) throw new Error('Session not found. Start over.');
-        state.stage = 'generating';
-        state.isSubmitting = true;
-        render();
-        try {
-          const response = await runWithRetry(() => api.synthesize({ sessionId: state.sessionId }), 1);
-          state.prompt = response.outputText;
-          state.promptModel = response.model;
-          state.stage = 'result';
-          state.notice = 'OpenAI output generated.';
-          state.error = '';
-        } catch (error) {
-          state.stage = 'error';
-          setError(toUserMessage(error, 'Prompt generation failed. Retry.'));
-        } finally {
-          state.isSubmitting = false;
-        }
-      }
-
-      function render() {
-        renderProgress();
-        renderStatus();
-        if (state.stage === 'loading') return;
-        if (state.stage === 'template') return renderTemplateStage();
-        if (state.stage === 'refinement') return renderRefinementStage();
-        if (state.stage === 'ready_to_generate') return renderReadyStage();
-        if (state.stage === 'generating') return renderGeneratingStage();
-        if (state.stage === 'result') return renderResultStage();
-        if (state.stage === 'error') return renderErrorStage();
-      }
-
-      function renderProgress() {
-        const show = state.stage === 'refinement' || state.stage === 'ready_to_generate' || state.stage === 'generating';
-        els.progress.hidden = !show;
-        if (!show) return;
-        const step = state.stage === 'ready_to_generate' || state.stage === 'generating' ? 3 : state.questionIndex;
-        const pct = Math.round((step / 3) * 100);
-        els.progressLabel.textContent = `Question ${step} of 3`;
-        els.progressPercent.textContent = `${pct}%`;
-        els.progressFill.style.width = `${pct}%`;
-      }
-
-      function renderStatus() {
-        if (state.error) {
-          els.status.dataset.kind = 'error';
-          els.status.textContent = state.error;
-          return;
-        }
-        if (state.notice) {
-          els.status.dataset.kind = 'ok';
-          els.status.textContent = state.notice;
-          return;
-        }
-        els.status.dataset.kind = '';
-        els.status.textContent = '';
-      }
-
-      function renderTemplateStage() {
-        els.title.textContent = 'Choose Template + Start';
-        els.view.innerHTML = `
-          <div class="template-grid">
-            ${state.templates
-              .map(
-                (template) => `
-                <button type="button" class="template-btn" data-action="pick-template" data-template-id="${escapeHtml(template.id)}" aria-pressed="${
-                  template.id === state.selectedTemplateId
-                }">
-                  <div class="template-name">${escapeHtml(template.name)}</div>
-                  <div class="template-desc">${escapeHtml(template.description)}</div>
-                </button>
-              `,
-              )
-              .join('')}
-          </div>
-          <div>
-            <label for="initial-input">Initial input</label>
-            <textarea id="initial-input" name="initialInput" placeholder="Describe what you need in one focused sentence.">${
-              state.initialInput ? escapeHtml(state.initialInput) : ''
-            }</textarea>
-            <div class="hint">Minimum 8 characters. Use Ctrl/Cmd+Enter to submit quickly.</div>
-          </div>
-          <div class="row">
-            <button class="primary" type="submit" ${state.isSubmitting ? 'disabled' : ''}>Start refinement</button>
-          </div>
-        `;
-      }
-
-      function renderRefinementStage() {
-        els.title.textContent = 'Refinement';
-        els.view.innerHTML = `
-          <div>
-            <label for="answer-input">Question ${state.questionIndex}</label>
-            <p>${escapeHtml(state.questionText)}</p>
-            <textarea id="answer-input" name="answerInput" placeholder="Answer in natural language.">${escapeHtml(state.answerText)}</textarea>
-            <div class="hint">One question at a time. Ctrl/Cmd+Enter submits.</div>
-          </div>
-          <div class="row">
-            <button class="primary" type="submit" ${state.isSubmitting ? 'disabled' : ''}>Continue</button>
-            <button class="ghost" type="button" data-action="start-over">Start over</button>
-          </div>
-        `;
-      }
-
-      function renderReadyStage() {
-        els.title.textContent = 'Ready to Generate Prompt';
-        els.view.innerHTML = `
-          <p>Your answers are captured. Generate OpenAI output now.</p>
-          <div class="row">
-            <button class="primary" type="submit" ${state.isSubmitting ? 'disabled' : ''}>Generate prompt</button>
-            <button class="ghost" type="button" data-action="change-answers">Change answers</button>
-            <button class="ghost" type="button" data-action="start-over">Start over</button>
-          </div>
-        `;
-      }
-
-      function renderGeneratingStage() {
-        els.title.textContent = 'Generating Prompt';
-        els.view.innerHTML = `
-          <p>Generating OpenAI output. This can take up to 30 seconds.</p>
-          <div class="hint">Do not close this tab.</div>
-        `;
-      }
-
-      function renderResultStage() {
-        els.title.textContent = 'OpenAI Output';
-        const promptHtml = renderPromptMarkup(state.prompt, state.promptModel);
-        els.view.innerHTML = `
-          <div class="image-wrap">${promptHtml}</div>
-          <div class="row">
-            <button class="primary" type="button" data-action="generate-another" ${state.isSubmitting ? 'disabled' : ''}>Regenerate prompt</button>
-            <button class="ghost" type="button" data-action="change-answers">Change answers</button>
-            <button class="ghost" type="button" data-action="start-over">Start over</button>
-          </div>
-        `;
-      }
-
-      function renderErrorStage() {
-        els.title.textContent = 'Prompt Generation Error';
-        els.view.innerHTML = `
-          <p>Prompt generation failed. Retry with the same answers or adjust answers first.</p>
-          <div class="row">
-            <button class="primary" type="submit" ${state.isSubmitting ? 'disabled' : ''}>Retry prompt generation</button>
-            <button class="ghost" type="button" data-action="change-answers">Change answers</button>
-            <button class="ghost" type="button" data-action="start-over">Start over</button>
-          </div>
-        `;
-      }
-
-      function renderPromptMarkup(prompt, model) {
-        if (!prompt) return '<p>No prompt output found.</p>';
-        const modelHtml = model ? `<div class="hint">Model: ${escapeHtml(model)}</div>` : '';
-        return `<p class="prompt-output">${escapeHtml(prompt)}</p>${modelHtml}`;
-      }
-
-      function getInitialInputValue() {
-        return document.getElementById('initial-input')?.value || '';
-      }
-
-      function getAnswerValue() {
-        return document.getElementById('answer-input')?.value || '';
-      }
-
-      async function request(url, init, isValidSuccess) {
+      async function request(url, init) {
         const requestId = `ui_${crypto.randomUUID().replaceAll('-', '')}`;
         let response;
         try {
@@ -618,108 +300,49 @@
           );
         }
 
-        if (!response.ok || !payload || !isValidSuccess(payload)) {
+        if (!response.ok || !payload || typeof payload.outputText !== 'string' || typeof payload.model !== 'string') {
           throw new FrontendApiError('Received an invalid server response. Please retry.', 'INTERNAL_ERROR', true);
         }
         return payload;
       }
 
-      function isTemplatesResponse(payload) {
-        return Array.isArray(payload.templates);
+      function render() {
+        els.submit.disabled = state.submitting;
+        els.submit.textContent = state.submitting ? 'Sending...' : 'Send to OpenAI';
+        renderStatus();
       }
 
-      function isStartResponse(payload) {
-        return typeof payload.sessionId === 'string' && payload.questionIndex === 1 && typeof payload.questionText === 'string';
-      }
-
-      function isAnswerResponse(payload) {
-        if (payload.done === true) return true;
-        return payload.done === false && [1, 2, 3].includes(payload.questionIndex) && typeof payload.questionText === 'string';
-      }
-
-      function isResetResponse(payload) {
-        return payload.reset === true;
-      }
-
-      function isSynthesizeResponse(payload) {
-        return typeof payload.outputText === 'string' && payload.outputText.length > 0 && typeof payload.model === 'string';
-      }
-
-      async function resetSessionAndView() {
-        const previousSessionId = state.sessionId;
-        if (previousSessionId) {
-          try {
-            await api.reset({ sessionId: previousSessionId });
-          } catch (error) {
-            if (!(error instanceof FrontendApiError && error.code === 'SESSION_NOT_FOUND')) {
-              throw error;
-            }
-          }
+      function renderStatus() {
+        if (state.error) {
+          els.status.dataset.kind = 'error';
+          els.status.textContent = state.error;
+          return;
         }
-
-        state.stage = 'template';
-        state.sessionId = '';
-        state.questionIndex = 1;
-        state.questionText = '';
-        state.answerText = '';
-        state.prompt = '';
-        state.promptModel = '';
-        state.notice = '';
-        state.error = '';
-        state.editFromQuestionIndex = null;
-      }
-
-      async function runWithRetry(fn, retries) {
-        let lastError;
-        for (let attempt = 0; attempt <= retries; attempt += 1) {
-          try {
-            return await fn();
-          } catch (error) {
-            lastError = error;
-            if (!(error instanceof FrontendApiError) || !error.retryable || attempt === retries) {
-              throw error;
-            }
-            await new Promise((resolve) => setTimeout(resolve, 450 * (attempt + 1)));
-          }
+        if (state.notice) {
+          els.status.dataset.kind = 'ok';
+          els.status.textContent = state.notice;
+          return;
         }
-        throw lastError;
+        els.status.dataset.kind = '';
+        els.status.textContent = '';
       }
 
       function toUserMessage(error, fallback) {
-        if (error instanceof FrontendApiError) {
-          return error.message;
-        }
-        if (error instanceof Error && error.message) {
-          return error.message;
-        }
+        if (error instanceof FrontendApiError) return error.message;
+        if (error instanceof Error && error.message) return error.message;
         return fallback;
       }
 
       function setError(message) {
         state.error = message;
         state.notice = '';
-        render();
+        renderStatus();
       }
 
       function clearStatus() {
         state.error = '';
         state.notice = '';
-      }
-
-      function focusInput() {
-        queueMicrotask(() => {
-          const target = document.getElementById('answer-input') || document.getElementById('initial-input') || els.title;
-          target?.focus?.();
-        });
-      }
-
-      function escapeHtml(value) {
-        return String(value)
-          .replaceAll('&', '&amp;')
-          .replaceAll('<', '&lt;')
-          .replaceAll('>', '&gt;')
-          .replaceAll('"', '&quot;')
-          .replaceAll("'", '&#039;');
+        renderStatus();
       }
     </script>
   </body>

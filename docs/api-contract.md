@@ -9,6 +9,7 @@ Code source:
 ## Endpoint Set
 
 - `GET /api/templates`
+- `POST /api/openai/test`
 - `POST /api/session/start`
 - `POST /api/session/answer`
 - `POST /api/session/reset`
@@ -116,6 +117,17 @@ Failure:
 
 Request:
 - `{ sessionId }`
+
+Success:
+- `{ ok, requestId, outputText, model }`
+
+Failure:
+- error envelope
+
+### `POST /api/openai/test`
+
+Request:
+- `{ text }`
 
 Success:
 - `{ ok, requestId, outputText, model }`

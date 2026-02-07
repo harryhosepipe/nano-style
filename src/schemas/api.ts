@@ -99,6 +99,19 @@ export const SynthesizeSuccessResponseSchema = z.object({
 
 export const SynthesizeResponseSchema = z.union([SynthesizeSuccessResponseSchema, ErrorResponseSchema]);
 
+export const OpenAITestRequestSchema = z.object({
+  text: z.string().min(1),
+});
+
+export const OpenAITestSuccessResponseSchema = z.object({
+  ok: z.literal(true),
+  requestId: RequestIdHeaderSchema,
+  outputText: z.string().min(1),
+  model: z.string().min(1),
+});
+
+export const OpenAITestResponseSchema = z.union([OpenAITestSuccessResponseSchema, ErrorResponseSchema]);
+
 export const SessionResetRequestSchema = z.object({
   sessionId: z.string().min(1).optional(),
 });
@@ -122,5 +135,7 @@ export type GenerateRequest = z.infer<typeof GenerateRequestSchema>;
 export type GenerateSuccessResponse = z.infer<typeof GenerateSuccessResponseSchema>;
 export type SynthesizeRequest = z.infer<typeof SynthesizeRequestSchema>;
 export type SynthesizeSuccessResponse = z.infer<typeof SynthesizeSuccessResponseSchema>;
+export type OpenAITestRequest = z.infer<typeof OpenAITestRequestSchema>;
+export type OpenAITestSuccessResponse = z.infer<typeof OpenAITestSuccessResponseSchema>;
 export type SessionResetRequest = z.infer<typeof SessionResetRequestSchema>;
 export type SessionResetSuccessResponse = z.infer<typeof SessionResetSuccessResponseSchema>;

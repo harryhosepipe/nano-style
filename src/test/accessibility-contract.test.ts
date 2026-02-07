@@ -7,14 +7,13 @@ describe('frontend accessibility contract', () => {
     expect(source).toContain('els.form.requestSubmit()');
   });
 
-  it('keeps focus management for step transitions', () => {
-    expect(source).toContain("document.getElementById('answer-input')");
-    expect(source).toContain("document.getElementById('initial-input')");
-    expect(source).toContain('target?.focus?.()');
+  it('keeps explicit input label and status live region', () => {
+    expect(source).toContain('label for="input-text"');
+    expect(source).toContain('aria-live="polite"');
   });
 
-  it('keeps progress semantics for 3-step refinement', () => {
-    expect(source).toContain('Question ${step} of 3');
-    expect(source).toContain('Math.round((step / 3) * 100)');
+  it('keeps submit/clear controls discoverable', () => {
+    expect(source).toContain('id="submit-btn"');
+    expect(source).toContain('id="clear-btn"');
   });
 });
