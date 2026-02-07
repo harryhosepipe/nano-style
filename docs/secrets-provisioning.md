@@ -13,6 +13,7 @@ For variable definitions and validation rules, see `docs/env-contract.md`.
 
 Optional for tunnel sharing:
 - `CLOUDFLARE_TUNNEL_TOKEN`
+- `ACCESS_GATE_PASSWORD`
 
 ## Local Development
 
@@ -62,6 +63,7 @@ Notes:
 - Use environment-scoped secrets (for staging/production) once deploy workflows exist.
 - PRs from forks do not receive repository secrets by default.
 - Add `CLOUDFLARE_TUNNEL_TOKEN` only if CI or deployment automation needs to start named tunnels.
+- Add `ACCESS_GATE_PASSWORD` when you want browser-level protection for shared tunnel links.
 
 ## Verification Checklist
 

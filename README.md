@@ -33,6 +33,12 @@ CLOUDFLARE_TUNNEL_TOKEN=... bun run tunnel:token
 
 Runbook: `docs/cloudflare-tunnel-runbook.md`
 
+Optional access gate for shared links:
+
+```bash
+ACCESS_GATE_PASSWORD=... bun run dev
+```
+
 ## Quality Gates
 
 ```bash

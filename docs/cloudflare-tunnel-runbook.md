@@ -45,7 +45,10 @@ Expected outcome:
 
 - Do not expose admin panels or non-MVP services through the same tunnel.
 - Treat tunnel URLs as internal-only.
-- For stronger protection, implement an access gate (`nanostyle-7nm.9`) before broader sharing.
+- For stronger protection, enable the optional access gate:
+  - set `ACCESS_GATE_PASSWORD`
+  - optional: set `ACCESS_GATE_USER` and `ACCESS_GATE_REALM`
+  - then restart app and tunnel
 
 ## Troubleshooting
 

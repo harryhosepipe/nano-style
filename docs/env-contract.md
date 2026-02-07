@@ -23,6 +23,9 @@ This document defines the canonical environment contract for NanoStyle MVP.
 | --- | --- | --- | --- |
 | `NODE_ENV` | `development` | `development`, `test`, `production` | Runtime mode. |
 | `PORT` | framework default | integer 1-65535 | Local server port override for Astro runtime. |
+| `ACCESS_GATE_USER` | `nanostyle` | non-empty string | Username for optional basic-auth access gate. |
+| `ACCESS_GATE_PASSWORD` | none | non-empty string | Enables optional basic-auth access gate when set. |
+| `ACCESS_GATE_REALM` | `NanoStyle Internal` | non-empty string | Browser auth prompt realm for access gate. |
 | `CLOUDFLARE_TUNNEL_TOKEN` | none | non-empty string | Token for stable named tunnel mode via `bun run tunnel:token`. |
 | `LOCAL_PORT` | `4321` | integer 1-65535 | Port used by `bun run tunnel:quick` to forward local app. |
 
