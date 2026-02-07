@@ -49,6 +49,12 @@ bun run build
 
 CI enforces these checks plus dependency audit. See `docs/ci-release-hygiene.md`.
 
+## Contracts
+
+- API contract: `docs/api-contract.md`
+- Provider adapter contracts: `docs/provider-adapter-contracts.md`
+- Telemetry contract: `docs/telemetry-contract.md`
+
 ## Project Structure
 
 - `src/api` server endpoints and route handlers

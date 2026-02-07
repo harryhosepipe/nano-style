@@ -16,8 +16,8 @@ Define request sequencing and service boundaries for MVP endpoints.
 4. Backend sets `questionIndex = 1` and returns canonical Q1 text.
 
 Response contract:
-- success: `{ sessionId, questionIndex: 1, questionText }`
-- failure: `{ error, code }`
+- success: `{ ok: true, requestId, sessionId, questionIndex: 1, questionText }`
+- failure: `{ ok: false, requestId, error: { code, message, retryable } }`
 
 ## Core Sequence: Answer Question
 1. UI sends `POST /api/session/answer` with `sessionId`, `answer`.
@@ -28,9 +28,9 @@ Response contract:
    - marks refinement done (`done: true`).
 
 Response contract:
-- next: `{ questionIndex, questionText }`
-- done: `{ done: true }`
-- failure: `{ error, code }`
+- next: `{ ok: true, requestId, done: false, questionIndex, questionText }`
+- done: `{ ok: true, requestId, done: true }`
+- failure: `{ ok: false, requestId, error: { code, message, retryable } }`
 
 ## Core Sequence: Generate Image
 1. UI sends `POST /api/generate` with `sessionId`.
@@ -41,8 +41,8 @@ Response contract:
 6. Backend returns image reference payload.
 
 Response contract:
-- success: `{ image }`
-- failure: `{ error, code }`
+- success: `{ ok: true, requestId, image }`
+- failure: `{ ok: false, requestId, error: { code, message, retryable } }`
 
 ## Adapter Interfaces
 OpenAI adapter:

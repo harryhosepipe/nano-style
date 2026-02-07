@@ -3,6 +3,9 @@
 ## Purpose
 Define MVP events, timing points, and logging schema.
 
+Code source:
+- `src/schemas/telemetry.ts`
+
 ## Funnel Events
 | Event | Trigger | Required Fields |
 | --- | --- | --- |
@@ -32,6 +35,10 @@ Required fields for all backend logs:
 - `provider` (`openai` or `nanobanana` where applicable)
 - `providerStatus` (if applicable)
 - `errorCode` (if applicable)
+
+Provider-specific contract payloads are explicitly typed in code:
+- `ProviderLatencyLogSchema`
+- `ProviderErrorLogSchema`
 
 ## Redaction Rules
 - Never log API keys, auth headers, or tokens.

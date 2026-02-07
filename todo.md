@@ -35,18 +35,18 @@
 - [x] P2-T3.2 Decide and implement optional password/access gate
 
 ## Phase 3 - Data Model + API Contracts + Integration Contracts
-- [ ] P3-T1 Define canonical domain schemas and shared TypeScript types
-- [ ] P3-T1.1 Create session and template schemas
-- [ ] P3-T1.2 Create stepper and generation payload schemas
-- [ ] P3-T2 Define endpoint contracts and source-of-truth documentation
-- [ ] P3-T2.1 Define happy-path and failure responses per endpoint
-- [ ] P3-T2.2 Define session cookie and request-id behavior
-- [ ] P3-T3 Define external provider adapter contracts
-- [ ] P3-T3.1 Define OpenAI adapter interface (questions + synthesis)
-- [ ] P3-T3.2 Define NanoBanana adapter interface (sync/async variants)
-- [ ] P3-T4 Finalize telemetry and logging contracts in code
-- [ ] P3-T4.1 Define funnel event payload schemas
-- [ ] P3-T4.2 Define provider latency/error log payload schema
+- [x] P3-T1 Define canonical domain schemas and shared TypeScript types
+- [x] P3-T1.1 Create session and template schemas
+- [x] P3-T1.2 Create stepper and generation payload schemas
+- [x] P3-T2 Define endpoint contracts and source-of-truth documentation
+- [x] P3-T2.1 Define happy-path and failure responses per endpoint
+- [x] P3-T2.2 Define session cookie and request-id behavior
+- [x] P3-T3 Define external provider adapter contracts
+- [x] P3-T3.1 Define OpenAI adapter interface (questions + synthesis)
+- [x] P3-T3.2 Define NanoBanana adapter interface (sync/async variants)
+- [x] P3-T4 Finalize telemetry and logging contracts in code
+- [x] P3-T4.1 Define funnel event payload schemas
+- [x] P3-T4.2 Define provider latency/error log payload schema
 
 ## Phase 4 - Backend Implementation (Core Services)
 - [ ] P4-T1 Implement session middleware and in-memory state service

@@ -64,14 +64,14 @@ Question order is fixed and non-adaptive in MVP:
 
 ## Endpoint Response Expectations
 - `POST /api/session/start`
-  - Returns: `sessionId`, `questionIndex: 1`, `questionText`
+  - Returns: `{ ok: true, requestId, sessionId, questionIndex: 1, questionText }`
 - `POST /api/session/answer`
   - Returns:
-    - next question: `questionIndex`, `questionText`, or
-    - done marker: `done: true` (ready to generate)
+    - next question: `{ ok: true, requestId, done: false, questionIndex, questionText }`, or
+    - done marker: `{ ok: true, requestId, done: true }` (ready to generate)
 - `POST /api/generate`
-  - Returns image reference payload on success
-  - Returns stable error envelope on failure
+  - Returns `{ ok: true, requestId, image }` on success
+  - Returns `{ ok: false, requestId, error: { code, message, retryable } }` on failure
 
 ## UX Constraints
 - One question visible at a time.

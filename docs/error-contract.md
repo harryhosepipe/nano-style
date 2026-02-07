@@ -7,7 +7,11 @@ Define stable error codes and user-safe copy mapping for MVP endpoints.
 All endpoint failures return:
 
 ```json
-{ "error": "Human-readable message", "code": "STABLE_CODE" }
+{
+  "ok": false,
+  "requestId": "req_123",
+  "error": { "code": "STABLE_CODE", "message": "Human-readable message", "retryable": false }
+}
 ```
 
 ## Canonical Error Codes
