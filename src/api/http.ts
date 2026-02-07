@@ -21,6 +21,9 @@ export const parseJsonBody = async <T>(context: APIContext): Promise<T> => {
 };
 
 export const jsonSuccess = (context: APIContext, data: Record<string, unknown>, status = 200): Response => {
+  if (containsDisallowedPromptField(data)) {
+    throw new ApiError('INTERNAL_ERROR', 500, 'Unexpected response shape.', false);
+  }
   const requestId = getRequestId(context);
   return new Response(JSON.stringify({ ok: true, requestId, ...data }), {
     status,
@@ -28,6 +31,26 @@ export const jsonSuccess = (context: APIContext, data: Record<string, unknown>, 
       'content-type': 'application/json; charset=utf-8',
       [REQUEST_ID_HEADER]: requestId,
     },
+  });
+};
+
+const containsDisallowedPromptField = (value: unknown): boolean => {
+  if (value === null || value === undefined) {
+    return false;
+  }
+  if (Array.isArray(value)) {
+    return value.some((item) => containsDisallowedPromptField(item));
+  }
+  if (typeof value !== 'object') {
+    return false;
+  }
+
+  return Object.entries(value as Record<string, unknown>).some(([key, nestedValue]) => {
+    const lowered = key.toLowerCase();
+    if (lowered === 'prompt' || lowered.endsWith('_prompt') || lowered.endsWith('prompt')) {
+      return true;
+    }
+    return containsDisallowedPromptField(nestedValue);
   });
 };
 

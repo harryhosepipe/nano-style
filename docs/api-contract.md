@@ -11,6 +11,7 @@ Code source:
 - `GET /api/templates`
 - `POST /api/session/start`
 - `POST /api/session/answer`
+- `POST /api/session/reset`
 - `POST /api/generate`
 
 ## Request-ID Contract
@@ -81,6 +82,17 @@ Success (next question):
 
 Success (refinement complete):
 - `{ ok, requestId, done: true }`
+
+Failure:
+- error envelope
+
+### `POST /api/session/reset`
+
+Request:
+- `{ sessionId? }`
+
+Success:
+- `{ ok, requestId, reset: true }`
 
 Failure:
 - error envelope

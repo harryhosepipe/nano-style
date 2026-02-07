@@ -10,5 +10,6 @@ export const API_ENDPOINTS = {
   templates: '/api/templates',
   sessionStart: '/api/session/start',
   sessionAnswer: '/api/session/answer',
+  sessionReset: '/api/session/reset',
   generate: '/api/generate',
 } as const;

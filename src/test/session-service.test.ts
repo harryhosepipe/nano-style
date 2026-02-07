@@ -29,4 +29,11 @@ describe('session service', () => {
     const result = await service.answerSession(session.sessionId, 'Elegant, tactile, moody, realistic.');
     expect(result.done).toBe(true);
   });
+
+  it('resets an existing session', async () => {
+    const service = new SessionService(new InMemorySessionStore());
+    const session = await service.startSession('general-cinematic', 'cinematic food scene');
+    await service.resetSession(session.sessionId);
+    await expect(service.getSession(session.sessionId)).rejects.toMatchObject({ code: 'SESSION_NOT_FOUND' });
+  });
 });

@@ -86,8 +86,26 @@ export const GenerateSuccessResponseSchema = z.object({
 
 export const GenerateResponseSchema = z.union([GenerateSuccessResponseSchema, ErrorResponseSchema]);
 
+export const SessionResetRequestSchema = z.object({
+  sessionId: z.string().min(1).optional(),
+});
+
+export const SessionResetSuccessResponseSchema = z.object({
+  ok: z.literal(true),
+  requestId: RequestIdHeaderSchema,
+  reset: z.literal(true),
+});
+
+export const SessionResetResponseSchema = z.union([SessionResetSuccessResponseSchema, ErrorResponseSchema]);
+
 export type ErrorCode = z.infer<typeof ErrorCodeSchema>;
 export type ApiErrorResponse = z.infer<typeof ErrorResponseSchema>;
+export type TemplatesSuccessResponse = z.infer<typeof TemplatesSuccessResponseSchema>;
 export type SessionStartRequest = z.infer<typeof SessionStartRequestSchema>;
+export type SessionStartSuccessResponse = z.infer<typeof SessionStartSuccessResponseSchema>;
 export type SessionAnswerRequest = z.infer<typeof SessionAnswerRequestSchema>;
+export type SessionAnswerSuccessResponse = z.infer<typeof SessionAnswerSuccessResponseSchema>;
 export type GenerateRequest = z.infer<typeof GenerateRequestSchema>;
+export type GenerateSuccessResponse = z.infer<typeof GenerateSuccessResponseSchema>;
+export type SessionResetRequest = z.infer<typeof SessionResetRequestSchema>;
+export type SessionResetSuccessResponse = z.infer<typeof SessionResetSuccessResponseSchema>;

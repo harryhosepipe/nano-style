@@ -109,6 +109,11 @@ export class SessionService {
     return this.store.upsert(sessionId, updated);
   }
 
+  async resetSession(sessionId: string): Promise<void> {
+    sparseRetryTracker.delete(sessionId);
+    await this.store.delete(sessionId);
+  }
+
   getCompleteAnswers(session: SessionState): [string, string, string] | null {
     const answers = [1, 2, 3].map((questionIndex) => session.answers.find((entry) => entry.questionIndex === questionIndex));
     if (answers.some((entry) => entry === undefined)) {

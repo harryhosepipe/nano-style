@@ -5,6 +5,7 @@ import {
   ErrorResponseSchema,
   GenerateResponseSchema,
   SessionAnswerResponseSchema,
+  SessionResetResponseSchema,
   SessionStartRequestSchema,
 } from '../schemas/api';
 import { SessionStateSchema, TemplateSchema } from '../schemas/domain';
@@ -60,6 +61,14 @@ describe('api schemas', () => {
         done: false,
         questionIndex: 2,
         questionText: 'What is the lighting direction?',
+      }).ok,
+    ).toBe(true);
+
+    expect(
+      SessionResetResponseSchema.parse({
+        ok: true,
+        requestId: 'req_12345678',
+        reset: true,
       }).ok,
     ).toBe(true);
 

@@ -80,15 +80,15 @@
 - [x] P5-T4.2 Verify progress indicator clarity and mobile ergonomics
 
 ## Phase 6 - End-to-End Integration + Feature Completion
-- [ ] P6-T1 Wire frontend API client to production endpoint contracts
-- [ ] P6-T1.1 Add endpoint wrapper methods and response guards
-- [ ] P6-T1.2 Standardize frontend error and retry behavior
-- [ ] P6-T2 Complete iterate behaviors and session reset semantics
-- [ ] P6-T2.1 Implement backend reset/update endpoints or handlers as needed
-- [ ] P6-T2.2 Connect UI controls to iteration handlers
-- [ ] P6-T3 Finalize provider edge-case handling end-to-end
-- [ ] P6-T3.1 Implement polling/status flow if provider is async
-- [ ] P6-T3.2 Validate no prompt leakage in integration transport
+- [x] P6-T1 Wire frontend API client to production endpoint contracts
+- [x] P6-T1.1 Add endpoint wrapper methods and response guards
+- [x] P6-T1.2 Standardize frontend error and retry behavior
+- [x] P6-T2 Complete iterate behaviors and session reset semantics
+- [x] P6-T2.1 Implement backend reset/update endpoints or handlers as needed
+- [x] P6-T2.2 Connect UI controls to iteration handlers
+- [x] P6-T3 Finalize provider edge-case handling end-to-end
+- [x] P6-T3.1 Implement polling/status flow if provider is async
+- [x] P6-T3.2 Validate no prompt leakage in integration transport
 
 ## Phase 7 - Quality: Testing + Security + Performance + Accessibility + Observability
 - [ ] P7-T1 Implement unit tests for contracts and parsing logic
